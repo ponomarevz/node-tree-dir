@@ -36,6 +36,10 @@ var xml = "<entry>"+
 		+ "<node type='Device' id='27' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "<node type='Device' id='28' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "<node type='Device' id='29' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+	+ "<node type='Group' id='27' caption='Soft1'>"
+		+ "<subitem name='Node.12'></subitem>"
+		+ "<subitem name='Node.28'></subitem>"
+		+ "<subitem name='Node.14' /></node>"
 	+ "<node type='Device' id='30' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "<node type='Device' id='31' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "<node type='Group' id='32' caption='Sofffft4'>"
@@ -46,13 +50,13 @@ var xml = "<entry>"+
 
 var parseString = require('xml2js').parseString;
 var nodes;
+
+//---------------парсинг xml--------------
 parseString(xml, {
 	attrkey: 'attrib',
 	charkey: 'char',
 	explicitRoot:false
-	
-	
-	},
+},
 function (err, result) {
 	nodes = result;
     console.dir(JSON.stringify(result));
@@ -60,7 +64,7 @@ function (err, result) {
 
 
 
-	//------------створюємо сервер---------------
+//------------создаем http сервер-------------------
 var express = require('express');
 
 var bodyParser = require('body-parser');
@@ -70,7 +74,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }))
 .use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:9000');
+	//--------настройки cors---------------
+   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:9000');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -83,8 +88,7 @@ var port = process.env.PORT || 3000;
 var router = express.Router();
 
 
-//-------------------------------------------------------------------
-//----------------------------------------------------
+//-------- настраиваем маршрутизатор сервера------------
 router.get('/nodes', function(req, res) {
 	//-------------извлечение всех данных---------------
 	res.json(nodes);
@@ -92,6 +96,6 @@ router.get('/nodes', function(req, res) {
 	
 app.use('/api', router);
 
-	// Запускаємо сервер
+	// Запускаем http сервер
 app.listen(port);
 console.log('server start' + port);

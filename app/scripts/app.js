@@ -10,10 +10,36 @@
  */
 angular
   .module('netmonApp', [
-    'ngAnimate'
+    'ngAnimate',
+	'ui.router'
   ]);
   
   angular
   .module('netmonApp').controller('mainCtrl', function(){
 	alert('main');
-  })
+  }).
+
+  config(function($stateProvider) {
+		
+			
+		$stateProvider
+		.state('about', {
+				url:'/about',
+				views: {
+					'centrV@' : {
+						templateUrl:'views/about.html',
+					},
+				},
+			})
+			.state('menu', {
+				url:'/dd:id',
+				views: {
+					
+				},
+				onenter: function() {
+					alert("dsfsd");
+				}
+			})
+			
+			
+	})

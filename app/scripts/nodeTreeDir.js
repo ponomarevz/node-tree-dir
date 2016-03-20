@@ -21,7 +21,7 @@
 			item: '=',
 			class: '='
 		},
-		template: "<li ng-switch on='item.attrib.type'>"
+		template: "<li ng-switch on='item.attrib.type' ui-sref='menu({id:item.attrib.id})' ui-sref-active='activet'  ng-click='$event.stopPropagation()'>"
 					+"<span ng-switch-when='Group' style='color: orange;' class='glyphicon glyphicon-th-list toogle-b'></span>"
 					+"<span ng-switch-when='Device' class='glyphicon glyphicon-cog'></span>"
 					+"<span ng-switch-when='Device'>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
