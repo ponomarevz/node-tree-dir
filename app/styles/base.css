@@ -17,3 +17,7 @@
 .toogle-b {
 	cursor: pointer;
 }
+
+.activet  {
+	color: red;
+}

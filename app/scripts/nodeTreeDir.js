@@ -21,11 +21,11 @@
 			item: '=',
 			class: '='
 		},
-		template: "<li ng-switch on='item.attrib.type' ui-sref='menu({id:item.attrib.id})' ui-sref-active='activet'  ng-click='$event.stopPropagation()'>"
+		template: "<li ng-switch on='item.attrib.type'>"
 					+"<span ng-switch-when='Group' style='color: orange;' class='glyphicon glyphicon-th-list toogle-b'></span>"
 					+"<span ng-switch-when='Device' class='glyphicon glyphicon-cog'></span>"
-					+"<span ng-switch-when='Device'>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
-					+"<span class= 'toogle-b' ng-switch-when='Group'>{{item.attrib.caption}} {{item.attrib.id}}</span>"
+					+"<span ng-switch-when='Device' class='caption'  ui-sref='menu({id:item.attrib.id})' ui-sref-active='activet'>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
+					+"<span ng-switch-when='Group' class= 'toogle-b' ui-sref='menu({id:item.attrib.id})' ui-sref-active='activet'>{{item.attrib.caption}} {{item.attrib.id}}</span>"
 					+"<span>{{item.attrib.name}}</span>"
 				+"</li>",
 		link: function (scope, element, attrs) {
