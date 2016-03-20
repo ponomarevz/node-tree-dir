@@ -1,0 +1,19 @@
+.tree, .tree ul, .tree li {
+	padding:0;
+	margin:0;
+	list-style:none;
+}
+.tree ul li {
+	margin-left: 15px;
+}
+
+
+.toogle {
+	display: none;
+}
+.active {
+	display: block;
+}
+.toogle-b {
+	cursor: pointer;
+}

@@ -1,0 +1,8 @@
+<span class="glyphicon glyphicon-th-list" ng-if = "item.subitem.length"></span>
+	<span ng-click = "selNode(item)" >{{ item.attrib.caption }}</span>
+	<span class="togle">{{ item.attrib.name }}</span>
+	<span class="badge">{{ item.subitem.length}}</span>
+	<div  class="list-group group" ng-if = "item.subitem && isSelNode(item)">
+        <span class="list-group-item" ng-repeat = "item in item.subitem" ng-include="'views/nodestree.tpl.html'">           
+        </span>
+    </div>
