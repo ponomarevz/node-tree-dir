@@ -26,21 +26,24 @@ angular.module('netmonApp')
 			var res = {};
 			var result = {};
 			var i;
-			//строим хеш наверное делать на єтапе парсинга
+			//строим хеш наверное делать на єтапе парсинга ][ml н сервере
 			for (i in rawc) {
 				var key = 'Node.'+rawc[i].attrib.id;
 				res[key] = rawc[i]; 
+				//res[key].parentId = "menu";
 			}
 			
 			for (i in res) {
-				
+				res[i].parentId =  res[i].parentId ? res[i].parentId : 'root';
 				if (res[i].attrib.type === 'Group') {
 					var k;
 					res[i].nodes = {};
 					for (k in res[i].subitem) {
 						var key = res[i].subitem[k].attrib.name;
 						res[i].nodes[key] = res[key];
+							
 						res[key].dele = true;
+							res[key].parentId = res[i].parentId + "." + res[i].attrib.id; //------------деллаем ссылку на родительский эллемент
 						console.log(key);
 					}
 				}

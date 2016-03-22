@@ -1,1 +1,0 @@
-<span class="list-group-item" ng-repeat="item in nodes" ><ng-include src="'views/nodestree.tpl.html'"></ng-include></span>
