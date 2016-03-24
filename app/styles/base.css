@@ -7,17 +7,37 @@
 	margin-left: 15px;
 }
 
+.menu {
+	
+}
 
 .toogle {
 	display: none;
 }
-.active {
-	display: block;
-}
+
 .toogle-b {
 	cursor: pointer;
 }
 
 .activet  {
 	color: red;
+}
+
+/*----стрелочка для разворачивающегося меню*/
+.down-b {
+	font-size: 10px;
+}
+.b-active {
+background-color: #52b6ec;
+}
+.submenu {
+	display:none;
+	
+	background-color: #52b6ec;
+	line-height:0.9;
+	
+}
+
+.active {
+	display: block;
 }
