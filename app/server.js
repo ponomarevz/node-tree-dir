@@ -39,12 +39,19 @@ var xml = "<entry>"+
 	+ "<node type='Group' id='27' caption='Soft1'>"
 		+ "<subitem name='Node.12'></subitem>"
 		+ "<subitem name='Node.28'></subitem>"
+		+ "<subitem name='Node.37'></subitem>"
 		+ "<subitem name='Node.14' /></node>"
 	+ "<node type='Device' id='30' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "<node type='Device' id='31' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "<node type='Group' id='32' caption='Sofffft4'>"
 		+ "<subitem name='Node.30'></subitem>"
 		+ "<subitem name='Node.31' /></node>"
+	+ "<node type='Group' id='37' caption='Додатково'>"
+		+ "<subitem name='Node.10'></subitem>"
+		+ "<subitem name='Node.11'></subitem>"
+		+ "<subitem name='Node.17'></subitem>"
+		+ "<subitem name='Node.19' /></node>"
+		
 	+ "</entry>";
 
 
