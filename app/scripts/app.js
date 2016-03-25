@@ -19,8 +19,8 @@ angular
   .controller('centrViewCtrl', function($scope, $rootScope, $state){
 		$scope.id = $state.params.id;
 		//----так делать нельзя но по быстрому
-		console.log($scope.$parent.nodes);
-		$scope.text = JSON.stringify($scope.$parent.nodes['Node.' + $scope.id]);
+		//console.log($scope.$parent.nodes);
+		//$scope.text = JSON.stringify($scope.$parent.nodes['Node.' + $scope.id]);
   }).
 
   config(function($stateProvider) {
@@ -35,7 +35,18 @@ angular
 					},
 				},
 			})
-			.state('menu', {
+			.state('main', {
+				url:'/main',
+				views: {
+					'nodes@' : {
+						template: '<data-nodes class = "tree" nodes="nodes"></data-nodes>',
+						controller: 'MainCtrl'
+					}
+				}
+				//	resolve доделать
+				
+			})
+			.state('main.menu', {
 				url:'/menu/:rout/:id',
 				views: {
 					'centrView@' : {

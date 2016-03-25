@@ -22,7 +22,7 @@ angular.module('netmonApp')
 	
 	
 	function transform(rawc) {
-		console.log(rawc);
+		
 			var res = {};
 			var result = {};
 			var i;
@@ -34,7 +34,7 @@ angular.module('netmonApp')
 			}
 			
 			for (i in res) {
-				res[i].parentId =  res[i].parentId ? res[i].parentId : 'root';
+				res[i].parentId =  res[i].parentId ? res[i].parentId : '';
 				if (res[i].attrib.type === 'Group') {
 					var k;
 					res[i].nodes = {};
@@ -44,7 +44,7 @@ angular.module('netmonApp')
 							
 						res[key].dele = true;
 							res[key].parentId = res[i].parentId + "." + res[i].attrib.id; //------------деллаем ссылку на родительский эллемент
-						console.log(key);
+						//console.log(key);
 					}
 				}
 			}
@@ -53,7 +53,7 @@ angular.module('netmonApp')
 					result[i] = res[i];
 				}
 			}
-			console.log(res);
+			//console.log(res);
 			return result;
 		}; 
 		
