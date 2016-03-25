@@ -41,3 +41,13 @@ background-color: #52b6ec;
 .active {
 	display: block;
 }
+
+.indicat {
+	color:grey;
+}
+.indicat-onn {
+	color:green!important;
+}
+.indicat-off {
+	color:red!important;
+}

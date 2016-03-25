@@ -111,7 +111,7 @@ var xml = "<entry>"+
 		+ "<node type='Device' id='77' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 		
 	+ "</entry>";
-
+	
 
 var parseString = require('xml2js').parseString;
 var nodes;
@@ -164,3 +164,86 @@ app.use('/api', router);
 	// Запускаем http сервер
 app.listen(port);
 console.log('server start' + port);
+
+var WebSocketServer = new require('ws');
+
+var clients = {};
+
+// WebSocket-сервер на порту 8081
+var webSocketServer = new WebSocketServer.Server({
+	port: 8081
+});
+
+webSocketServer.on('connection', function(ws) {
+
+	var id = Math.random();
+	clients[id] = ws;
+	console.log("новое соединение " + id);
+	
+	var mes = {
+		'id': id,
+		'text': 'соеденение установлено',
+		'data': {}
+	};
+	
+	ws.on('message', function(message) {
+		console.log('получено сообщение ' + message);
+				
+    });
+	
+	ws.on('close', function() {
+		console.log('соединение закрыто ' + id);
+		delete clients[id];
+	});
+
+ 
+});
+
+var events;
+
+
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+// начать повторы с интервалом 2 сек
+var timerId = setInterval(function() {
+  var node = getRandomInt(2,50);
+  var status = getRandomInt(0,1);
+  console.log(node + "  " + status);
+			
+			var eventXml = "<entry>"
+				+"<eventinstance actioninstance='ACTIONINSTANCE.PING.PING.55'"
+				+ " event='EVENT.PING.RESULT' node='NODE." + node +"'"
+				+ " result='Ping for [ocalhost] succeeded (4/4 packets) with RTT 0.25 ms.'" 
+				+ " time_high='30507288' time_low='1953380656'" 
+				+ " id='197'     module='PING' name='RESULT'" 
+				+ " status='" + status + "'>"
+					+"<property name='PACKET COUNT' value='4' />"
+					+"<property name='PACKET SUCCEEDED' value='4' />"
+					+"<property name='RTT' value='0.250000' />"
+				+"</eventinstance>"
+				+"</entry>";
+				
+				//---------------парсинг xml--------------
+				parseString(eventXml, {
+						attrkey: 'attrib',
+						charkey: 'char',
+						explicitRoot:false
+				},
+				function (err, result) {
+						var events = JSON.stringify(result);
+						
+						//-----------отправляем всем клиентам-------------
+						console.dir(events);
+						for (var key in clients) {
+							clients[key].send(events);
+						}
+				});
+
+				
+  
+			
+}, 2000);

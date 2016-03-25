@@ -39,7 +39,7 @@ angular
 				url:'/main',
 				views: {
 					'nodes@' : {
-						template: '<data-nodes class = "tree" nodes="nodes"></data-nodes>',
+						template: '	<span>dddd {{evJdro.status}}</span><data-nodes class = "tree" nodes="nodes" evjdro="evJdro"></data-nodes>',
 						controller: 'MainCtrl'
 					}
 				}

@@ -7,9 +7,10 @@
 		replace: true,
 		scope: {
 			nodes: '=',
+			evjdro: '=',
 			class: '='
 		},
-		template: "<ul><node ng-repeat='item in nodes' item='item'></node></ul>"
+		template: "<ul><node ng-repeat='item in nodes' item='item' evjdro='evjdro'></ul>"
 		
 	}
 })
@@ -20,6 +21,7 @@
 		replace: true,
 		scope: {
 			item: '=',
+			evjdro: '=',
 			class: '='
 			
 		},
@@ -28,6 +30,7 @@
 					+"<span ng-switch-when='Device' class='glyphicon glyphicon-cog'></span>"
 					+"<span ng-switch-when='Device' class='caption'  ng-class='{activet: getActivate(item)}' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
 					+"<span ng-switch-when='Group' class= 'toogle-b' ng-class='{activet: getActivate(item)}' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}}</span>"
+					+"<small><span ng-class='getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='Device'></span></small>"
 					+"<span ng-if='getActivate(item)' style='float: right' class='down-b glyphicon glyphicon-arrow-down'></span>"
 					+"<div ng-if='getActivate(item)' class='submenu'>"
 						+"<p>субменю (загрузим шаблончик)</p>"
@@ -40,7 +43,7 @@
 				
 			if (scope.item.attrib.type == 'Group') {
 				
-					var templ = "<nodes ng-class='getActivFol(item)' class='toogle' id='item.attrib.id' nodes='item.nodes'></nodes>"
+					var templ = "<nodes ng-class='getActivFol(item)' class='toogle' id='item.attrib.id' evjdro='evjdro' nodes='item.nodes'></nodes>"
 					element.append(templ); 
 
 				$compile(element.contents())(scope);
@@ -58,8 +61,8 @@
 					
 					//-----------обработчик для разворота меню суб меню------ 
 					if (  ev_el.hasClass('down-b') ) {
-					//по шаблону сосед идет суб меню, но ангулар генерирует 
-					//комментарии, которые попвдают в соседи для диррективы ng-if
+					//по шаблону сосед идет суб меню, но ангулар генерирует свои
+					//комментарии, которые попадают в соседи для диррективы ng-if
 						
 						el = event.target.nextSibling.nextSibling.nextSibling; 
 						
@@ -140,6 +143,15 @@
 				var rout =  $state.params.rout.split(".");
 				var clas = (rout.indexOf(item.attrib.id) > -1) ? 'toogle active' : "toogle";
 					return clas;
+			}
+			$scope.getCl = function(item, evjdro) {
+				console.log(evjdro.id);
+				if (item.attrib.id == evjdro.id) {
+					item.attrib.cl = evjdro.status == 1 ? 'indicat-onn':'indicat-off'
+					return item.attrib.cl;
+					
+				}
+				return item.attrib.cl;
 			}
 		}
 	}
