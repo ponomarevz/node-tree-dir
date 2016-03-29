@@ -110,6 +110,23 @@ var xml = "<entry>"+
 		+ "<node type='Device' id='76' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 		+ "<node type='Device' id='77' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 		
+		+ "<node type='Device' id='78' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='79' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='80' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='81' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='82' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='83' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='84' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='85' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='86' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='87' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='88' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='89' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='90' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='91' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='92' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='93' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
+		+ "<node type='Device' id='94' ip='192.168.0.1' hostname='localhost' caption='Dev1'></node>"
 	+ "</entry>";
 	
 
@@ -210,7 +227,7 @@ function getRandomInt(min, max) {
 
 // начать повторы с интервалом 2 сек
 var timerId = setInterval(function() {
-  var node = getRandomInt(2,50);
+  var node = getRandomInt(2,70);
   var status = getRandomInt(0,1);
   console.log(node + "  " + status);
 			
@@ -246,4 +263,4 @@ var timerId = setInterval(function() {
 				
   
 			
-}, 2000);
+}, 5000);

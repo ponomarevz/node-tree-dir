@@ -19,7 +19,7 @@ angular.module('netmonApp')
 			console.log("ok");
 		});
 		
-		
+		console.log("sss");
 		$scope.selNode = function(item) {
 			$scope.selIt = item;
 		};
@@ -31,7 +31,7 @@ angular.module('netmonApp')
 		nodeServ.createConection();
 		
 		$scope.$on('eventJadro', function(event, res) {
-								console.log("--------------------")
+			//					console.log("--------------------")
 			$scope.evJdro.status = res.attrib.status;
 			$scope.evJdro.id = res.attrib.node.split(".")[1];
 			$scope.$apply();

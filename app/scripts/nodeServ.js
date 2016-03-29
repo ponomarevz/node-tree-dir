@@ -30,7 +30,7 @@ angular.module('netmonApp')
 			
 			//--------обработчик поступления соедения--------
 			curSocket.onmessage = function(message) {
-				console.log(message.data);
+				//console.log(message.data);
 				$rootScope.$broadcast('eventJadro', JSON.parse(message.data).eventinstance[0]);
 			};
 					
@@ -48,11 +48,12 @@ angular.module('netmonApp')
 			for (i in rawc) {
 				var key = 'Node.'+rawc[i].attrib.id;
 				res[key] = rawc[i]; 
-				//res[key].parentId = "menu";
+				
+								res[key].parentId = [];
 			}
 			
 			for (i in res) {
-				res[i].parentId =  res[i].parentId ? res[i].parentId : '';
+				
 				if (res[i].attrib.type === 'Group') {
 					var k;
 					res[i].nodes = {};
@@ -61,8 +62,9 @@ angular.module('netmonApp')
 						res[i].nodes[key] = res[key];
 							
 						res[key].dele = true;
-							res[key].parentId = res[i].parentId + "." + res[i].attrib.id; //------------деллаем ссылку на родительский эллемент
-						//console.log(key);
+						res[key].parentId = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+							
+					  //console.log(key);
 					}
 				}
 			}
@@ -70,6 +72,7 @@ angular.module('netmonApp')
 				if (!res[i].dele) {
 					result[i] = res[i];
 				}
+				console.log(res[i].parentId);
 			}
 			//console.log(res);
 			return result;

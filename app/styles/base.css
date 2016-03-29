@@ -46,8 +46,10 @@ background-color: #52b6ec;
 	color:grey;
 }
 .indicat-onn {
+	transition:all 0.2s;
 	color:green!important;
 }
 .indicat-off {
+	transition:all 0.2s;
 	color:red!important;
 }

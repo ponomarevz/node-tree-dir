@@ -54,9 +54,9 @@
 					var ev_el = angular.element(event.target);
 					//----------обработчик для разворота узлов вложеного дерева---------------
 					if (  ev_el.hasClass('toogle-b') ) {
-						el = event.currentTarget.querySelector('.toogle');
-						el_m = angular.element(el);
-						el_m.toggleClass('active');
+						//el = event.currentTarget.querySelector('.toogle');
+						//el_m = angular.element(el);
+						//el_m.toggleClass('active');
 					};
 					
 					//-----------обработчик для разворота меню суб меню------ 
@@ -110,12 +110,17 @@
 			
 		},
 		controller: function($scope, $state) {
+				
+				var rout;
+				if ($state.params.rout) { 
+					rout = $state.params.rout.split(".")
+				};
+				
 				console.log("Віп первім");
 				//----------запоминаем все открытые вкладки
-				console.log($state.params.rout);
+				//console.log($state.params.rout);
 				//--------- плохое решение наверное нужен роот скоп но работает
-				var rout;
-				if ($state.params.rout) { rout = $state.params.rout.split(".")};
+				
 				$scope.$root.fullState = rout ||  []; //------каждый вложенный элемент создает свой скоп поэтому полный путь добавляем в корневой скоп
 			
 			//----------------- реагирует на клик мішки на єлементе 
@@ -123,36 +128,59 @@
 			$scope.toState = function(item) {
 				var curState = item.parentId;
 				var fullState;
-				if ($scope.$root.fullState.indexOf(curState) <= -1) {
-					$scope.$root.fullState.push(curState);
-				}
+					var curId = item.attrib.id;
+					if (item.attrib.type == 'Group') {
+						
+						var index = $scope.$root.fullState.indexOf(curId);
+						if (index <= -1) {
+							curState = curState.concat(item.attrib.id);
+						} else {
+							//---
+							$scope.$root.fullState.splice(index, 1);
+						}
+					}
+					//-------- curState содержит id всех перентов выделенного итема
+					//--------curStateFilter содержит id всех перентов которых нет в $scope.$root.fullState
+					//---------$scope.$root.fullState содержит id всех открытых вложеных груп нодов
+					//----------fullState содержит строку которая будет хаписана в хистори адресною строку браузера
+					var curStateFilter = curState.filter(function(state){
+						return $scope.$root.fullState.indexOf(state) <= -1;
+					})
+					
+					
+				$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
 				fullState =  $scope.$root.fullState.join('.');
 				
 				console.log(fullState);
 				$state.go('main.menu', {'rout': fullState, 'id': item.attrib.id});
 			};
 			
+			//----------нужно для подсвечивания активного элемента
 			$scope.getActivate = function(item) {
-				//console.log("оценка производительности");
+					//console.log("оценка производительности");
 				return $state.params.id === item.attrib.id;
 			}
-			
+			//----------нужно для отображения раскрытых вкладок------------
 			$scope.getActivFol = function(item) {
-				//console.log("jw");
+			//		console.log("jw");
 				if (!$state.params.rout) {return false};
 				var rout =  $state.params.rout.split(".");
 				var clas = (rout.indexOf(item.attrib.id) > -1) ? 'toogle active' : "toogle";
 					return clas;
 			}
+			//-----------быстро для индикации подсветки онлайн статуса----------
 			$scope.getCl = function(item, evjdro) {
-				console.log(evjdro.id);
+			//	console.log("еще производит");
 				if (item.attrib.id == evjdro.id) {
 					item.attrib.cl = evjdro.status == 1 ? 'indicat-onn':'indicat-off'
-					return item.attrib.cl;
-					
 				}
 				return item.attrib.cl;
 			}
+			//--------------отключаем лишний вотчер нужно тестировать--------
+			var watch = $scope.$watch('getActivate(item)', function(newV, oldW) {
+				console.log("dddddd");
+			});
+			watch();
 		}
 	}
 })
