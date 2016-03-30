@@ -7,8 +7,8 @@
 		replace: true,
 		scope: {
 			nodes: '=',
-			evjdro: '=',
-			class: '='
+			evjdro: '='
+			
 		},
 		template: "<ul><node ng-repeat='item in nodes' item='item' evjdro='evjdro'></ul>"
 		
@@ -21,22 +21,22 @@
 		replace: true,
 		scope: {
 			item: '=',
-			evjdro: '=',
-			class: '='
+			evjdro: '='
+			
 			
 		},
 		template: "<li class='menu' ng-switch on='item.attrib.type'>"
 					+"<span ng-switch-when='Group' style='color: orange;' class='glyphicon glyphicon-th-list toogle-b'></span>"
+					+"<small><span ng-class='getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='Device'></span></small>"
 					+"<span ng-switch-when='Device' class='glyphicon glyphicon-cog'></span>"
 					+"<span ng-switch-when='Device' class='caption'  ng-class='{activet: getActivate(item)}' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
 					+"<span ng-switch-when='Group' class= 'toogle-b' ng-class='{activet: getActivate(item)}' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}}</span>"
-					+"<small><span ng-class='getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='Device'></span></small>"
 					+"<span ng-if='getActivate(item)' style='float: right' class='down-b glyphicon glyphicon-arrow-down'></span>"
 					+"<div ng-if='getActivate(item)' class='submenu'>"
-						+"<p>субменю (загрузим шаблончик)</p>"
-						+"<p>Удалить</p>"
-						+"<p>что то еще</p>"
+						+"<p ng-click='clBut(item)' class='sub-b'>Добавить групу</p>"
+						+"<p ng-click='clBut(item)' class='sub-b'>Удалить групу</p>"
 					+"</div>"
+					+"<div ng-if='getActivate(item)' class='vidget'>asdasdasd</div>"
 					+"<span>{{item.attrib.name}}</span>"
 				+"</li>",
 		link: function (scope, element, attrs) {
@@ -52,6 +52,7 @@
 				element.on('click', function(event) {
 					var el, el_m;
 					var ev_el = angular.element(event.target);
+					//angular.element(document.body).find('.tree .sub-active').toggleClass('sub-active');
 					//----------обработчик для разворота узлов вложеного дерева---------------
 					if (  ev_el.hasClass('toogle-b') ) {
 						//el = event.currentTarget.querySelector('.toogle');
@@ -68,67 +69,93 @@
 						
 						ev_el.toggleClass('b-active glyphicon-arrow-down glyphicon-arrow-up');
 						el_m = angular.element(el);
-						el_m.toggleClass('active'); //----------разворачиваем sub-menu
+						el_m.toggleClass('sub-active'); //----------разворачиваем sub-menu
 					}
 					event.stopPropagation();
 				});
 				
 				//-------------обработчики событий для Drag Drop-----------------
+				//---------------подумать о делегировании событий поднять выше
+				var mouseOn;
 				element.on("mousedown", function(event){
-					//console.log(element);
+					
+					
 					var ev_el = angular.element(event.target);
-					if (ev_el.hasClass('activet')) {
+					//if (ev_el.hasClass('activet')) {
 						
 						var elem = ev_el.clone(); 
 						var el = elem[0];
 						el.style.position = 'absolute';
 						moveAt(event);
 						// переместим в body
-						document.body.appendChild(el);
-							event.stopPropagation(); //---важно----
+						
+							//event.stopPropagation(); //---важно----
 						el.style.zIndex = 1000; 
-
 						
 						function moveAt(event) {
 							el.style.left = event.pageX - el.offsetWidth / 2 + 'px';
 							el.style.top = event.pageY - el.offsetHeight / 2 + 'px';
 						}
-						
+						var create = false;
+						mouseOn = true;
 						document.onmousemove = function(event) {
+							
+							if (!create && mouseOn) {
+								document.body.appendChild(el);
+								//---------каласс action нужен для того чтобы применять css hover для контейнера с данным
+								//классом, но во время drag drop класс action нужно отключать так ховер ведет себя очень глючно 
+								angular.element(document.body).find('.tree .action').toggleClass('action');
+								create = true;
+							}
+							
 								moveAt(event);
 						}
 						
 						// 4. отследить окончание переноса
 						elem.on('mouseup', function(event) {
-								//console.log(document.elementFromPoint(100, 100)); //----так я найду элемент над которым мыш 
+							angular.element(document.body).find('.tree').toggleClass('action');
+								console.log(document.elementFromPoint(100, 100)); //----так я найду элемент над которым мыш 
 							document.onmousemove = null;
 							elem.remove();
 						});
-					}
+					//}
 				});
+				element.on("mouseup", function(event){
+					
+						mouseOn = false;
+				});
+				//-----------конец драг анд дроп------------
 			
 			
 		},
 		controller: function($scope, $state) {
-				
-				var rout;
-				if ($state.params.rout) { 
-					rout = $state.params.rout.split(".")
-				};
-				
-				console.log("Віп первім");
-				//----------запоминаем все открытые вкладки
-				//console.log($state.params.rout);
-				//--------- плохое решение наверное нужен роот скоп но работает
-				
-				$scope.$root.fullState = rout ||  []; //------каждый вложенный элемент создает свой скоп поэтому полный путь добавляем в корневой скоп
 			
+			 //------каждый вложенный элемент создает свой скоп поэтому полный путь добавляем в корневой скоп
+			//--------начальная инициализация
+			var rout = $state.params.rout ? $state.params.rout.split(".") : "";
+				$scope.$root.fullState = rout ||  [];
+			//изменение состояния	
+			$scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+				angular.element(document.body).find('.sub-active.vidget').toggleClass('sub-active'); 
+				angular.element(document.body).find('.tree .sub-active').toggleClass('sub-active');
+				 
+			});
+			$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+				console.log("change");
+				
+				rout = $state.params.rout ? $state.params.rout.split(".") : "";
+				$scope.$root.fullState = rout ||  [];
+			});
+				
+						
 			//----------------- реагирует на клик мішки на єлементе 
 			//----------и строит маршрут состояния и переводит приложение в него
 			$scope.toState = function(item) {
 				var curState = item.parentId;
+				var curId = item.attrib.id;
+					console.log("parId   " + item.parentId);
 				var fullState;
-					var curId = item.attrib.id;
+					
 					if (item.attrib.type == 'Group') {
 						
 						var index = $scope.$root.fullState.indexOf(curId);
@@ -147,8 +174,10 @@
 						return $scope.$root.fullState.indexOf(state) <= -1;
 					})
 					
-					
+					console.log("curstF  " + curStateFilter);
+					console.log("scopeFst  " + $scope.$root.fullState);
 				$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
+				console.log("sss  " + $scope.$root.fullState)
 				fullState =  $scope.$root.fullState.join('.');
 				
 				console.log(fullState);
@@ -162,10 +191,11 @@
 			}
 			//----------нужно для отображения раскрытых вкладок------------
 			$scope.getActivFol = function(item) {
-			//		console.log("jw");
-				if (!$state.params.rout) {return false};
-				var rout =  $state.params.rout.split(".");
-				var clas = (rout.indexOf(item.attrib.id) > -1) ? 'toogle active' : "toogle";
+					//console.log("jw");
+				//---------подумать как убрать две строчки кода
+				
+				//var rout = ($state.params.rout) ? $state.params.rout.split(".") : [];
+				var clas = ($scope.$root.fullState.indexOf(item.attrib.id) > -1) ? 'toogle active' : "toogle";
 					return clas;
 			}
 			//-----------быстро для индикации подсветки онлайн статуса----------
@@ -175,6 +205,10 @@
 					item.attrib.cl = evjdro.status == 1 ? 'indicat-onn':'indicat-off'
 				}
 				return item.attrib.cl;
+			}
+			$scope.clBut = function(item){
+				console.log("ddd")
+				angular.element(document.body).find('.vidget').toggleClass('sub-active'); 
 			}
 			//--------------отключаем лишний вотчер нужно тестировать--------
 			var watch = $scope.$watch('getActivate(item)', function(newV, oldW) {

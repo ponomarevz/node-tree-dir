@@ -2,13 +2,35 @@
 	padding:0;
 	margin:0;
 	list-style:none;
+	font-size: 12px;
+	
 }
-.tree ul li {
-	margin-left: 15px;
+.tree {
+	border: 1px solid blue;
+	padding:5px;
+	
 }
 
-.menu {
+.tree ul li {
 	
+	padding-left: 15px;
+	
+}
+
+
+
+.action .caption:hover {
+	border-left:3px blue solid;
+	color:blue!important;
+		
+}
+.action .caption  {
+	
+	transition: all 0.07s;
+}
+.caption {
+	
+		cursor: pointer;
 }
 
 .toogle {
@@ -30,14 +52,31 @@
 .b-active {
 background-color: #52b6ec;
 }
+
 .submenu {
-	display:none;
-	
-	background-color: #52b6ec;
-	line-height:0.9;
+	overflow:hidden;
+	margin:0;
+	height:0;
+	max-height:50px;
+	visibility:none;
+	background-color: silver;
+	transition: all 0.5s;
 	
 }
-
+.submenu .sub-b {
+	padding:0;
+	padding-left:5px;
+	color: green;
+	cursor:pointer;
+}
+.submenu .sub-b:hover {
+	color: blue;
+}
+.sub-active {
+	
+	height:100px!important;
+	visibility:visible!important;
+}
 .active {
 	display: block;
 }
@@ -52,4 +91,13 @@ background-color: #52b6ec;
 .indicat-off {
 	transition:all 0.2s;
 	color:red!important;
+}
+
+.vidget {
+	height:0;
+	transition: all 0.5s;
+	visibility:none;
+	background-color:grey;
+	max-height:100px;
+	overflow:hidden;
 }
