@@ -40,7 +40,8 @@
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#/">Домой</a></li>
+              <li ui-sref-active="active"><a ui-sref="dash">Настроить</a></li>
+			  <li ui-sref-active="active"><a ui-sref="monitor">Монітор</a></li>
               <li><a ng-href="#/">О нас</a></li>
               
             </ul>
@@ -51,12 +52,15 @@
 
     <div class="container">
 		<div class="row">	
+			<div class="main-centr" ui-view="main-centr"></div>
+			
 			<div class="col-sm-5">
-				<div ui-view="nodes"></div> <!--- menu --> 
+				<div class="left-widget" ui-view="left-widget"></div> <!--- menu --> 
 			</div>
-			<div class="col-sm-7" ui-view="centrView"></div>
+			<div class="col-sm-7" ui-view="right-widget"></div>
 		</div>
 	</div>
+	
     <div class="footer">
       <div class="container">
         <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>

@@ -8,9 +8,48 @@
 .tree {
 	border: 1px solid blue;
 	padding:5px;
+	position:relative;
 	
 }
 
+body {
+	transition:2s;
+}
+.left-widget.ng-enter    {
+	width: 0!important;
+	transition: 1.5s;
+}
+.left-widget.ng-enter-active   {
+	width: 100%!important;
+	transition: 1.5s;
+}
+.left-widget.ng-leave   {
+	width: 100%!important;
+	transition: 1.5s;
+}
+.left-widget.ng-leave-active    {
+	width: 0!important;
+	transition: 1.5s;
+}
+
+.main-centr.ng-enter  {
+	visibility:none;
+	width: 0!important;
+	transition: 1.5s;
+}
+.main-centr.ng-enter-active  {
+	visibility:active;
+	width: 100%!important;
+	transition: 1.5s;
+}
+.main-centr.ng-leave  {
+	width: 100%!important;
+	transition: 1.5s;
+}
+.main-centr.ng-leave-active  {
+	width: 0!important;
+	transition: 1.5s;
+}
 .tree ul li {
 	
 	padding-left: 15px;
@@ -20,13 +59,14 @@
 
 
 .action .caption:hover {
-	border-left:3px blue solid;
+	
 	color:blue!important;
+transition: all 0.7s;
 		
 }
-.action .caption  {
+.caption  {
 	
-	transition: all 0.07s;
+	
 }
 .caption {
 	
@@ -34,7 +74,15 @@
 }
 
 .toogle {
-	display: none;
+	visibility:none;
+	max-height:0px;
+	overflow:hidden;
+	transition: all 0.5s;
+}
+.active {
+	max-height:600px!important;
+	visibility:visible!important;
+	transition: all 1.2s;
 }
 
 .toogle-b {
@@ -55,18 +103,22 @@ background-color: #52b6ec;
 
 .submenu {
 	overflow:hidden;
-	margin:0;
+	
 	height:0;
 	max-height:50px;
 	visibility:none;
-	background-color: silver;
+	background-color: #52b6ec;;
 	transition: all 0.5s;
-	
+	position: absolute;
+	left:0;
+	width:100%;
+	z-index:9999999;
 }
 .submenu .sub-b {
 	padding:0;
+	margin:0;
 	padding-left:5px;
-	color: green;
+	color: #fff;
 	cursor:pointer;
 }
 .submenu .sub-b:hover {
@@ -77,9 +129,7 @@ background-color: #52b6ec;
 	height:100px!important;
 	visibility:visible!important;
 }
-.active {
-	display: block;
-}
+
 
 .indicat {
 	color:grey;
@@ -94,10 +144,14 @@ background-color: #52b6ec;
 }
 
 .vidget {
+	position:absolute;
+	left:0;
 	height:0;
+	width:100%;
+	z-index:9999999;
 	transition: all 0.5s;
 	visibility:none;
-	background-color:grey;
+	background-color: #52b6ec;
 	max-height:100px;
 	overflow:hidden;
 }

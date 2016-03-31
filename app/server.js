@@ -263,4 +263,4 @@ var timerId = setInterval(function() {
 				
   
 			
-}, 50);
+}, 500);

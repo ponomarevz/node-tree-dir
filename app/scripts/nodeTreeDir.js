@@ -32,11 +32,12 @@
 					+"<span ng-switch-when='Device' class='caption'  ng-class='{activet: getActivate(item)}' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
 					+"<span ng-switch-when='Group' class= 'toogle-b' ng-class='{activet: getActivate(item)}' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}}</span>"
 					+"<span ng-if='getActivate(item)' style='float: right' class='down-b glyphicon glyphicon-arrow-down'></span>"
-					+"<div ng-if='getActivate(item)' class='submenu'>"
-						+"<p ng-click='clBut(item)' class='sub-b'>Добавить групу</p>"
-						+"<p ng-click='clBut(item)' class='sub-b'>Удалить групу</p>"
+					+"<div ng-if-start='getActivate(item)' class='submenu'>"
+						+"<p ng-click='clBut(item)' class='sub-b'>Редактировать узел</p>"
+						+"<p ng-click='clBut(item)' class='sub-b'>Добавить узел</p>"
+						+"<p ng-click='clBut(item)' class='sub-b'>Удалить узел</p>"
 					+"</div>"
-					+"<div ng-if='getActivate(item)' class='vidget'>asdasdasd</div>"
+					+"<div ng-if-end class='vidget'>asdasdasd</div>"
 					+"<span>{{item.attrib.name}}</span>"
 				+"</li>",
 		link: function (scope, element, attrs) {
@@ -74,57 +75,7 @@
 					event.stopPropagation();
 				});
 				
-				//-------------обработчики событий для Drag Drop-----------------
-				//---------------подумать о делегировании событий поднять выше
-				var mouseOn;
-				element.on("mousedown", function(event){
-					
-					
-					var ev_el = angular.element(event.target);
-					//if (ev_el.hasClass('activet')) {
-						
-						var elem = ev_el.clone(); 
-						var el = elem[0];
-						el.style.position = 'absolute';
-						moveAt(event);
-						// переместим в body
-						
-							//event.stopPropagation(); //---важно----
-						el.style.zIndex = 1000; 
-						
-						function moveAt(event) {
-							el.style.left = event.pageX - el.offsetWidth / 2 + 'px';
-							el.style.top = event.pageY - el.offsetHeight / 2 + 'px';
-						}
-						var create = false;
-						mouseOn = true;
-						document.onmousemove = function(event) {
-							
-							if (!create && mouseOn) {
-								document.body.appendChild(el);
-								//---------каласс action нужен для того чтобы применять css hover для контейнера с данным
-								//классом, но во время drag drop класс action нужно отключать так ховер ведет себя очень глючно 
-								angular.element(document.body).find('.tree .action').toggleClass('action');
-								create = true;
-							}
-							
-								moveAt(event);
-						}
-						
-						// 4. отследить окончание переноса
-						elem.on('mouseup', function(event) {
-							angular.element(document.body).find('.tree').toggleClass('action');
-								console.log(document.elementFromPoint(100, 100)); //----так я найду элемент над которым мыш 
-							document.onmousemove = null;
-							elem.remove();
-						});
-					//}
-				});
-				element.on("mouseup", function(event){
-					
-						mouseOn = false;
-				});
-				//-----------конец драг анд дроп------------
+				
 			
 			
 		},
@@ -181,7 +132,7 @@
 				fullState =  $scope.$root.fullState.join('.');
 				
 				console.log(fullState);
-				$state.go('main.menu', {'rout': fullState, 'id': item.attrib.id});
+				$state.go('monitor.root', {'rout': fullState, 'id': item.attrib.id});
 			};
 			
 			//----------нужно для подсвечивания активного элемента

@@ -35,10 +35,10 @@ angular
 					},
 				},
 			})
-			.state('main', {
-				url:'/main',
+			.state('monitor', {
+				url:'/monitor',
 				views: {
-					'nodes@' : {
+					'left-widget@' : {
 						templateUrl: 'views/main.html',
 						controller: 'MainCtrl'
 					}
@@ -46,10 +46,20 @@ angular
 				//	resolve доделать
 				
 			})
-			.state('main.menu', {
-				url:'/menu/:rout/:id',
+			.state('dash', {
+				url:'/dash',
 				views: {
-					'centrView@' : {
+					'main-centr@' : {
+						templateUrl:'views/dash.tpl.html',
+					}
+				}
+				//	resolve доделать
+				
+			})
+			.state('monitor.root', {
+				url:'/:rout/:id',
+				views: {
+					'right-widget@' : {
 						templateUrl:'views/main.tpl.html',
 						controller: 'centrViewCtrl'
 					}
