@@ -8,10 +8,12 @@
  * Controller of the netmonApp
  */
 angular.module('netmonApp')
-  .controller('MainCtrl', function (nodeServ, $scope) {
+  .controller('MainCtrl', function (nodeServ, $scope, $state) {
 		$scope.selIt;
 		$scope.nodes;
 		$scope.evJdro={}; $scope.evJdro.status ="1";
+		$scope.events = {};
+		$scope.events.curentId = $state.params.id;
 		
 		nodeServ.getNodes().then(function(data){
 			$scope.nodes = data;
@@ -33,7 +35,14 @@ angular.module('netmonApp')
 		$scope.$on('eventJadro', function(event, res) {
 			//					console.log("--------------------")
 			$scope.evJdro.status = res.attrib.status;
-			$scope.evJdro.id = res.attrib.node.split(".")[1];
+			var id = res.attrib.node.split(".")[1];
+			$scope.evJdro.id = id;
+			
+			$scope.events[id] = $scope.events[id] || [];
+			$scope.events[id].push(res);
+			
+			console.log(res);
+			
 			$scope.$apply();
 		});
   });

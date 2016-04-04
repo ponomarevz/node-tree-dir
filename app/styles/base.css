@@ -6,10 +6,18 @@
 	
 }
 .tree {
-	border: 1px solid blue;
 	padding:5px;
 	position:relative;
+	overflow-y: scroll;
+	max-height: 450px;
 	
+}
+
+.events {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	max-height: 200px;
+	height:200px;
 }
 
 body {
@@ -105,6 +113,10 @@ transition: all 0.7s;
 /*----стрелочка для разворачивающегося меню*/
 .down-b {
 	font-size: 10px;
+	visibility:hidden;
+}
+.b-visible {
+	visibility: visible;
 }
 .b-active {
 background-color: #52b6ec;

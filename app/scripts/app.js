@@ -39,8 +39,7 @@ angular
 				url:'/monitor',
 				views: {
 					'left-widget@' : {
-						templateUrl: 'views/main.html',
-						controller: 'MainCtrl'
+						templateUrl: 'views/main.html'
 					}
 				}
 				//	resolve доделать
@@ -60,8 +59,8 @@ angular
 				url:'/:rout/:id',
 				views: {
 					'right-widget@' : {
-						templateUrl:'views/main.tpl.html',
-						controller: 'centrViewCtrl'
+						templateUrl:'views/events.tpl.html',
+						controller: 'eventsCtrl'
 					}
 				},
 				onEnter: function() {

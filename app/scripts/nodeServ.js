@@ -72,7 +72,7 @@ angular.module('netmonApp')
 				if (!res[i].dele) {
 					result[i] = res[i];
 				}
-				console.log(res[i].parentId);
+				
 			}
 			//console.log(res);
 			return result;

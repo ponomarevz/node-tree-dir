@@ -132,6 +132,7 @@ var xml = "<entry>"+
 
 var parseString = require('xml2js').parseString;
 var nodes;
+var fs = require('fs');
 
 //---------------парсинг xml--------------
 parseString(xml, {
@@ -259,8 +260,8 @@ var timerId = setInterval(function() {
 							clients[key].send(events);
 						}
 				});
-
-				
+					
+					
   
 			
 }, 500);
