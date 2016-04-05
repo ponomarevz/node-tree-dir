@@ -27,6 +27,8 @@ module.exports = function(config) {
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
+      'bower_components/javascript-detect-element-resize/detect-element-resize.js',
+      'bower_components/angular-gridster/src/angular-gridster.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

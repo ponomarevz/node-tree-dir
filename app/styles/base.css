@@ -5,21 +5,35 @@
 	font-size: 12px;
 	
 }
+.panel{
+	position:relative;
+}
+.panel-body {
+	 position: absolute;
+  top: 45px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+  overflow: auto;
+	padding-right: 200px;
+	
+}
+
 .tree {
 	padding:5px;
 	position:relative;
-	overflow-y: scroll;
-	max-height: 450px;
+	
 	
 }
 
 .events {
-	overflow-y: scroll;
-	overflow-x: hidden;
-	max-height: 200px;
-	height:200px;
+	
 }
 
+.right-widget{
+	transition: all 0 !important;
+}
 body {
 	transition:2s;
 }
@@ -45,11 +59,8 @@ body {
 
 
 
-.main-centr.ng-enter  {
-	position:absolute;
-	top: -200px!important;
-	transition: 1.5s;
-}
+
+
 
 .main-centr.ng-enter-active  {
 	top: 50px!important;

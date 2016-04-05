@@ -1,8 +1,8 @@
-<div class="panel panel-info">
+<div class="panel panel-info" gridster-item='dashboards[1]'>
 	<div class="panel-heading">
 		<div class="panel-title">Cобытия по объектам</div>
 	</div>
-	<div style="padding:0; margin:0" class="panel-body events">
+	<div style="padding:0; margin:0" class="panel-body events"> 
 		
 		<div ng-repeat="item in events[curentId]">
 			<div class="row">
@@ -11,6 +11,7 @@
 				
 				<div class="col-md-12">
 				<span ng-class='getCl(item)' class='glyphicon glyphicon-record'></span>
+					<small style ="color:blue;">{{ item.attrib.node}}</small>
 					<small><em>{{ item.attrib.event}}</em></small>
 					<small><em>{{ item.attrib.result}}</em></small>
 					<small><em>{{ item.attrib.time_high}}</em></small>

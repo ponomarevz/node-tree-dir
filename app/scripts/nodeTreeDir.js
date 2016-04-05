@@ -170,7 +170,7 @@
 				$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
 				
 				fullState =  $scope.$root.fullState.join('.');
-				$state.go('monitor.root', {'rout': fullState, 'id': item.attrib.id});
+				$state.go('monitor.root', {'rout': fullState, 'id': item.attrib.id}, {reload:false});
 			};
 			
 			//----------нужно для подсвечивания активного элемента

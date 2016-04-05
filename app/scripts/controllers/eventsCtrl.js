@@ -10,7 +10,10 @@
 angular.module('netmonApp')
   .controller('eventsCtrl', function ($scope, $state) {
 		
+	$scope.$root.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
 		$scope.curentId = $state.params.id;
+		
+	});
 	$scope.getCl = function(item){
 		return item.attrib.status == 1 ? 'indicat-onn':'indicat-off';
 	}

@@ -11,7 +11,8 @@
 angular
   .module('netmonApp', [
     'ngAnimate',
-	'ui.router'
+	'ui.router',
+	'gridster'
   ]);
   
   angular
@@ -36,13 +37,7 @@ angular
 				},
 			})
 			.state('monitor', {
-				url:'/monitor',
-				views: {
-					'left-widget@' : {
-						templateUrl: 'views/main.html'
-					}
-				}
-				//	resolve доделать
+				url:'/monitor'
 				
 			})
 			.state('dash', {
@@ -56,16 +51,7 @@ angular
 				
 			})
 			.state('monitor.root', {
-				url:'/:rout/:id',
-				views: {
-					'right-widget@' : {
-						templateUrl:'views/events.tpl.html',
-						controller: 'eventsCtrl'
-					}
-				},
-				onEnter: function() {
-				
-				}
+				url:'/:rout/:id'
 			});
 			
 			
