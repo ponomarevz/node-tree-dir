@@ -3,37 +3,30 @@
 	margin:0;
 	list-style:none;
 	font-size: 12px;
-	
 }
+.tree ul li {
+	padding-left: 15px;
+}
+/* ----- для gridster ---------- */
 .panel{
 	position:relative;
 }
 .panel-body {
-	 position: absolute;
-  top: 45px;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  padding: 10px;
-  overflow: auto;
+	position: absolute;
+	top: 45px;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	padding: 10px;
+	overflow: auto;
 	padding-right: 200px;
-	
 }
-
+/* ----- для gridster ---------- */
 .tree {
 	padding:5px;
 	position:relative;
-	
-	
 }
 
-.events {
-	
-}
-
-.right-widget{
-	transition: all 0 !important;
-}
 body {
 	transition:2s;
 }
@@ -78,28 +71,15 @@ body {
 }
 
 
-
-.tree ul li {
-	
-	padding-left: 15px;
-	
-}
-
-
-
 .action .caption:hover {
 	
 	color:blue!important;
 transition: all 0.7s;
 		
 }
-.caption  {
-	
-	
-}
+
 .caption {
-	
-		cursor: pointer;
+	cursor: pointer;
 }
 
 .toogle {

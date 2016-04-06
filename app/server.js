@@ -135,11 +135,12 @@ var nodes;
 var fs = require('fs');
 
 //---------------парсинг xml--------------
-parseString(xml, {
+var pars_opts = {
 	attrkey: 'attrib',
 	charkey: 'char',
 	explicitRoot:false
-},
+};
+parseString(xml, pars_opts,
 function (err, result) {
 	nodes = result;
     console.dir(JSON.stringify(result));
@@ -158,7 +159,7 @@ app.use(bodyParser.urlencoded({
 }))
 .use(function (req, res, next) {
 	//--------настройки cors---------------
-   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:9000');
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:9000');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -185,6 +186,7 @@ console.log('server start' + port);
 
 var WebSocketServer = new require('ws');
 
+//----------объект содержащий список зарегестрированных клиентов
 var clients = {};
 
 // WebSocket-сервер на порту 8081
@@ -219,8 +221,7 @@ webSocketServer.on('connection', function(ws) {
 
 var events;
 
-
-
+//-----------функция для генерации случаного числа из диапазона
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -246,19 +247,25 @@ var timerId = setInterval(function() {
 				+"</entry>";
 				
 				//---------------парсинг xml--------------
-				parseString(eventXml, {
-						attrkey: 'attrib',
-						charkey: 'char',
-						explicitRoot:false
-				},
+				parseString(eventXml, pars_opts, 
 				function (err, result) {
+					if (err) {
+						console.log("---ERROR PARSING--" + err)
+					} else {	
 						var events = JSON.stringify(result);
-						
 						//-----------отправляем всем клиентам-------------
 						console.dir(events);
 						for (var key in clients) {
-							clients[key].send(events);
+							try {
+								clients[key].send(events);
+							} catch (error) {
+								if (error == "Error: not opened") {
+									delete clients[key];
+								};
+								console.log("---SEND MESSAGE" + error);
+							}
 						}
+					}
 				});
 					
 					

@@ -11,7 +11,7 @@ angular.module('netmonApp')
   .controller('MainCtrl', function (nodeServ, $scope, $state,  $localStorage) {
 		
 		
-	
+	//----------------------------настрой грид системы---------------
 		$scope.grOpt = { 
 			pushing: true, // whether to push other items out of the way on move or resize
 			floating: true, // whether to automatically float items up so they stack (you can temporarily disable if you are adding unsorted items with ng-repeat)
@@ -28,27 +28,39 @@ angular.module('netmonApp')
 				}
 				} 
 			};
-		//----------список виджетов
+			//-----------типы виджетов и пути к их темплейтам
+			$scope.vidgetesTemplate = {
+				'nodesTree': 'views/nodesTree.tpl.html',
+				'events': 'views/events.tpl.html',
+				'actions': 'views/actions.tpl.html'
+				
+			};
+		//----------список виджетов--------------
 		if (!$localStorage.dashboards) {
-			//---------сли нет в $localStorage.dashboards инициализируем по default
+			//---------если нет в $localStorage.dashboards инициализируем по default
+			
 			$scope.dashboards = [
 				{  	col: 0,
 					row: 0,
 					sizeY: 2,
 					sizeX: 2,
-					name: "Widget 1"
+					name: 'Widget 1',
+					//---выше необходимо для настройки отображения в grsdster
+					type: 'nodesTree' // необходимо для выбора нужного темплейта
 				}, {
 					col: 3,
 					row: 0,
 					sizeY: 1,
 					sizeX: 4,
-					name: "Widget 2"
+					name: 'Widget 2',
+					type: 'events'
 				}, {
 					col: 3,
 					row: 0,
 					sizeY: 1,
 					sizeX: 4,
-					name: "Widget 3"
+					name: 'Widget 3',
+					type: 'actions'
 				}
 			
 			];
@@ -59,7 +71,8 @@ angular.module('netmonApp')
 		//------------инициализация greedster
 		$scope.selIt;
 		$scope.nodes;
-		$scope.evJdro={}; $scope.evJdro.status ="1";
+		$scope.evJdro={}; 
+		$scope.evJdro.status ="1";
 		$scope.events = {};
 		//----------- если работает пересмотреть ))))
 		$scope.events.curentId = $state.params.id;
@@ -73,19 +86,11 @@ angular.module('netmonApp')
 		
 		nodeServ.getNodes().then(function(data){
 			$scope.nodes = data;
-			console.log(data);
-			console.log("ok");
+			
 		});
 		
-		console.log("sss");
-		$scope.selNode = function(item) {
-			$scope.selIt = item;
-		};
 		
-		$scope.isSelNode = function(item) {
-			return $scope.selIt === item;
-		};
-		
+				
 		nodeServ.createConection();
 		
 		$scope.$on('eventJadro', function(event, res) {
@@ -96,9 +101,17 @@ angular.module('netmonApp')
 			
 			$scope.events[id] = $scope.events[id] || [];
 			$scope.events[id].push(res);
-			
-			console.log(res);
-			
+						
 			$scope.$apply();
 		});
+		
+		//---------------данный блок нужно будет перенести в контроллер диррективы events что бы он там крутился
+		$scope.$root.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+			$scope.curentId = $state.params.id;
+		
+		});
+		$scope.getCl = function(item){
+			return item.attrib.status == 1 ? 'indicat-onn':'indicat-off';
+		}
+		//---------------данный блок нужно будет перенести в контроллер диррективы events что бы он там крутился
   });

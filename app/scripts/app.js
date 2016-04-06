@@ -37,10 +37,6 @@ angular
 					},
 				},
 			})
-			.state('monitor', {
-				url:'/monitor'
-				
-			})
 			.state('dash', {
 				url:'/dash',
 				views: {
@@ -49,6 +45,10 @@ angular
 					}
 				}
 				//	resolve доделать
+				
+			})
+			.state('monitor', {
+				url:'/monitor'
 				
 			})
 			.state('monitor.root', {
