@@ -12,7 +12,8 @@ angular
   .module('netmonApp', [
     'ngAnimate',
 	'ui.router',
-	'gridster'
+	'gridster',
+	'ngStorage'
   ]);
   
   angular

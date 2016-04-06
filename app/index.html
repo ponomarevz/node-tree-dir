@@ -51,15 +51,30 @@
       </div>
   
 
-    <div class="container">
+    <div class="fulfilled-container">
 	<div class="main-centr" ui-view="main-centr"></div>
-		<div ng-controller="MainCtrl" gridster="gridsterOpts">	
-			
-			
-			<!--------------- виджеты обернуть в ui-view типа dashboard -->
-			<div class="left-widget" ng-include="'views/main.html'"></div> <!--- menu --> 
-			<div ng-controller = 'eventsCtrl' class="right-widget" ng-include="'views/events.tpl.html'"></div>
+		<div ng-controller="MainCtrl">
+			<div gridster="grOpt">	
 					
+				<!--------------- виджеты обернуть в ui-view типа dashboard -->
+				<div  ng-include="'views/main.html'" class="left-widget"></div> <!--- menu --> 
+				<div  ng-controller = 'eventsCtrl' class="right-widget" ng-include="'views/events.tpl.html'"></div>
+				
+<!------ заглушка для 3 виджета для демрнстрации -->
+		<div class="panel panel-info" gridster-item='dashboards[2]'>
+			<div class="panel-heading">
+				<div class="panel-title">Например Actions</div>
+			</div>
+			<div style="padding:0; margin:0" class="panel-body">
+			 
+				<h5>Сюда разместим еще какой-то синхронизируемый виджет </h5>
+		
+			</div>
+		</div>				
+<!------ заглушка для 3 виджета для демрнстрации -->					
+			
+			
+			</div>
 		</div>
 	</div>
 	
@@ -86,6 +101,7 @@
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/javascript-detect-element-resize/detect-element-resize.js"></script>
     <script src="bower_components/angular-gridster/src/angular-gridster.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

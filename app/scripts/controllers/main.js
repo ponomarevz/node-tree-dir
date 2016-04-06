@@ -8,52 +8,53 @@
  * Controller of the netmonApp
  */
 angular.module('netmonApp')
-  .controller('MainCtrl', function (nodeServ, $scope, $state,  $timeout) {
+  .controller('MainCtrl', function (nodeServ, $scope, $state,  $localStorage) {
 		
 		
-		$timeout(function() {
-    enabled = true;
-
-    // timeout required for some template rendering
-    $el.ready(function() {
-        if (enabled !== true) {
-        return;
-    }
-    // disable any existing draghandles
-    for (var u = 0, ul = unifiedInputs.length; u < ul; ++u) {
-        unifiedInputs[u].disable();
-        unifiedInputs[h] = new GridsterTouch($dragHandles[h], mouseDown, mouseMove, mouseUp);
-        unifiedInputs[h].enable();
-    }
-
-    enabled = true;
-    });
-};
-		$scope.gridsterOpts = {
-  
-			margins: [20, 20],
-			columns: 4,
-			draggable: {
-				handle: '.panel-title'
-			}
-		};
+	
+		$scope.grOpt = { 
+			pushing: true, // whether to push other items out of the way on move or resize
+			floating: true, // whether to automatically float items up so they stack (you can temporarily disable if you are adding unsorted items with ng-repeat)
+			swapping: false,
+			draggable: { 
+				enabled: true,  
+				handle: '.panel-heading',
+				stop: function(event, $element, widget) {
+						//alert($scope.dashboards[0].col);
+						//------------разделить на методы отдельного сервиса сделать Save Dashboard
+						//------------сделать GetDashboard
+						$localStorage.dashboards = $scope.dashboards;
+						console.log($localStorage.dashboards);
+				}
+				} 
+			};
 		//----------список виджетов
-		$scope.dashboards = [
-			{  	col: 0,
-				row: 0,
-				sizeY: 3,
-				sizeX: 3,
+		if (!$localStorage.dashboards) {
+			//---------сли нет в $localStorage.dashboards инициализируем по default
+			$scope.dashboards = [
+				{  	col: 0,
+					row: 0,
+					sizeY: 2,
+					sizeX: 2,
 					name: "Widget 1"
 				}, {
 					col: 3,
 					row: 0,
-					sizeY: 3,
-					sizeX: 3,
+					sizeY: 1,
+					sizeX: 4,
 					name: "Widget 2"
+				}, {
+					col: 3,
+					row: 0,
+					sizeY: 1,
+					sizeX: 4,
+					name: "Widget 3"
 				}
 			
-		];
-		
+			];
+		} else { //--------инче инициализируем с $localStorage
+			$scope.dashboards = $localStorage.dashboards;
+		}
 		
 		//------------инициализация greedster
 		$scope.selIt;
