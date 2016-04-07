@@ -57,15 +57,17 @@
 		<!-- DashBoard завернуть в состояние и загружать в центральный виев-->
 		<div ng-controller="MainCtrl">
 			
-			<div gridster="grOpt">	<!-- Gridster сетка для dashBorda -->
-				<div ng-repeat = "vidget in dashboards">
-					<!-- Загружаем vidget-u в bootstrap панель todo можна написать свою панель -->
+			<div gridster="dash.grOpt">	<!-- Gridster сетка для dashBorda -->
+				<div ng-repeat = "vidget in dash.dashboards">
+					<!-- Загружаем vidget-u в bootstrap панель todo можна написать свою панель c четом 
+					корпаративных требований к стилям просто переопределить Bootstrap css классы ---->
 					<div class="panel panel-info" gridster-item = "vidget">
 						<div class="panel-heading">
-							<div class="panel-title">Объекты мониторинга</div>
+							<div class="panel-title">{{vidget.name}}</div>
+							<span ng-click="deleVidget(vidget)" class="panelBdele glyphicon glyphicon-minus"></span> <!-- Кнопка для удалить виджет -->
 						</div>
 						<div style="padding:0; margin:0" class="panel-body">
-							<div ng-include="vidgetesTemplate[vidget.type]"></div>
+							<div ng-include="dash.vidgetesTemplate[vidget.type].url"></div>
 						</div>
 					</div> <!-- end bootstrap panel -->
 				</div> <!-- end ng-repeat vidget -->
@@ -104,11 +106,11 @@
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
-		<script src="scripts/nodeServ.js"></script>
+		<script src="scripts/service/nodeServ.js"></script>
+		<script src="scripts/service/dashServ.js"></script>
 		<script src="scripts/nodeTreeDir.js"></script>
         <script src="scripts/controllers/main.js"></script>
-		<script src="scripts/controllers/eventsCtrl.js"></script>
-		
+				
         <!-- endbuild -->
 </body>
 </html>

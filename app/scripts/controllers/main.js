@@ -8,65 +8,9 @@
  * Controller of the netmonApp
  */
 angular.module('netmonApp')
-  .controller('MainCtrl', function (nodeServ, $scope, $state,  $localStorage) {
+  .controller('MainCtrl', function (nodeServ, dashServ, $scope, $state,  $localStorage) {
 		
-		
-	//----------------------------настрой грид системы---------------
-		$scope.grOpt = { 
-			pushing: true, // whether to push other items out of the way on move or resize
-			floating: true, // whether to automatically float items up so they stack (you can temporarily disable if you are adding unsorted items with ng-repeat)
-			swapping: false,
-			draggable: { 
-				enabled: true,  
-				handle: '.panel-heading',
-				stop: function(event, $element, widget) {
-						//alert($scope.dashboards[0].col);
-						//------------разделить на методы отдельного сервиса сделать Save Dashboard
-						//------------сделать GetDashboard
-						$localStorage.dashboards = $scope.dashboards;
-						console.log($localStorage.dashboards);
-				}
-				} 
-			};
-			//-----------типы виджетов и пути к их темплейтам
-			$scope.vidgetesTemplate = {
-				'nodesTree': 'views/nodesTree.tpl.html',
-				'events': 'views/events.tpl.html',
-				'actions': 'views/actions.tpl.html'
-				
-			};
-		//----------список виджетов--------------
-		if (!$localStorage.dashboards) {
-			//---------если нет в $localStorage.dashboards инициализируем по default
-			
-			$scope.dashboards = [
-				{  	col: 0,
-					row: 0,
-					sizeY: 2,
-					sizeX: 2,
-					name: 'Widget 1',
-					//---выше необходимо для настройки отображения в grsdster
-					type: 'nodesTree' // необходимо для выбора нужного темплейта
-				}, {
-					col: 3,
-					row: 0,
-					sizeY: 1,
-					sizeX: 4,
-					name: 'Widget 2',
-					type: 'events'
-				}, {
-					col: 3,
-					row: 0,
-					sizeY: 1,
-					sizeX: 4,
-					name: 'Widget 3',
-					type: 'actions'
-				}
-			
-			];
-		} else { //--------инче инициализируем с $localStorage
-			$scope.dashboards = $localStorage.dashboards;
-		}
+		$scope.dash = dashServ.initDash();
 		
 		//------------инициализация greedster
 		$scope.selIt;
@@ -82,7 +26,7 @@ angular.module('netmonApp')
 		$scope.setCurTreeId = function() {
 			//alert("asdas");
 			//----потестить диррективу stop propogation в директиве
-		}
+		};
 		
 		nodeServ.getNodes().then(function(data){
 			$scope.nodes = data;
@@ -95,13 +39,22 @@ angular.module('netmonApp')
 		
 		$scope.$on('eventJadro', function(event, res) {
 			//					console.log("--------------------")
+			//---------- этот обработчик по сути включает режим монииторинга входящих событий
+			//1. так как событий может быть много необходимо подумать о стеке и его реализации
+			//2. если необходимо посмотреть историю событий необходимо остановить мониторинг 
+			//	т.е. отключить это монитор и реализовать загрузку данных в виджеты с пагинацией
+				
 			$scope.evJdro.status = res.attrib.status;
 			var id = res.attrib.node.split(".")[1];
 			$scope.evJdro.id = id;
-			
+				//----------- вот это все нужно будет продумать сделать стеком на опрделенное количество записей
 			$scope.events[id] = $scope.events[id] || [];
-			$scope.events[id].push(res);
-						
+			$scope.events[id].unshift(res);
+				//----------- вот это все нужно будет продумать сделать стеком на опрделенное количество записей
+				//----------unshift добовляем в голову списка
+			$scope.allEvents = $scope.allEvents || [];
+			$scope.allEvents.unshift(res);	
+			
 			$scope.$apply();
 		});
 		
@@ -112,6 +65,16 @@ angular.module('netmonApp')
 		});
 		$scope.getCl = function(item){
 			return item.attrib.status == 1 ? 'indicat-onn':'indicat-off';
-		}
+		};
 		//---------------данный блок нужно будет перенести в контроллер диррективы events что бы он там крутился
+		//---------------данный блок нужно будет перенести в контроллер диррективы addVidget что бы он там крутился
+		$scope.addVidg = function(name, type) {
+			dashServ.addVidget(name, type);
+		};
+		//---------------данный блок нужно будет перенести в контроллер диррективы addVidget что бы он там крутился
+		$scope.deleVidget = function(vidget) {
+			dashServ.delVidget(vidget);
+			
+		};
+		
   });

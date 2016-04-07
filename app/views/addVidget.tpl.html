@@ -1,0 +1,27 @@
+<!------ заглушка для 3 виджета для демрнстрации -->
+	
+	                        
+		<form class="form-horizontal" role="form">
+			<div style="margin-bottom: 25px" class="input-group">
+				<input type="text" ng-model="name" class="form-control" name="name" placeholder="Имя виджета">
+			</div>
+			
+			<div style="margin-top:10px" class="form-group">
+				<div class="col-sm-12 controls">
+					<select class="form-control" ng-options="item as item.name for item in dash.vidgetesTemplate " ng-model="selected"></select>
+				</div>
+			</div>
+			
+			<div style="margin-top:10px" class="form-group">
+				<div class="col-sm-12 controls">
+					<button id="btn-login" class="btn btn-success" ng-click="addVidg(name, selected.type)">Добавить</button>
+				</div>
+			</div>
+		   
+		</form>
+                                         
+              
+       
+
+		
+<!------ заглушка для 3 виджета для демрнстрации -->
