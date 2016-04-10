@@ -2,7 +2,7 @@
 (function(){
 	
 	angular.module('netmonApp')
-		.service('dashServ', dashServ);
+		.service('dashServ', ['$localStorage' ,dashServ]);
 		
 		function dashServ($localStorage) {
 			

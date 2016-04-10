@@ -5,14 +5,14 @@
 	<div class="row">				
 		<div class="col-md-12">
 			<span ng-class='getCl(item)' class='glyphicon glyphicon-record'></span>
-			<small style ="color:blue;">{{ item.attrib.node}}</small>
-			<small><em>{{ item.attrib.event}}</em></small>
-			<small><em>{{ item.attrib.result}}</em></small>
-			<small><em>{{ item.attrib.time_high}}</em></small>					
-			<small><em>{{ item.attrib.status}}</em></small>
+			<small style ="color:blue;">{{::item.attrib.node}}</small>
+			<small><em>{{::item.attrib.event}}</em></small>
+			<small><em>{{::item.attrib.result}}</em></small>
+			<small><em>{{::item.attrib.time_high}}</em></small>					
+			<small><em>{{::item.attrib.status}}</em></small>
 		</div>
 	</div> <!-- end row of ng-repeat events -->
-</div> <!-- end ng-repeat event in events
+</div> <!-- end ng-repeat event in events -->
 		
 			
 <!------ заглушка для 3 виджета для демрнстрации -->

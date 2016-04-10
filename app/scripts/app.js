@@ -18,14 +18,14 @@ angular
   
   angular
   .module('netmonApp')
-  .controller('centrViewCtrl', function($scope, $rootScope, $state){
+  .controller('centrViewCtrl', ['$scope', '$rootScope', '$state', function($scope, $rootScope, $state){
 		$scope.id = $state.params.id;
 		//----так делать нельзя но по быстрому
 		//console.log($scope.$parent.nodes);
 		//$scope.text = JSON.stringify($scope.$parent.nodes['Node.' + $scope.id]);
-  }).
+  }]).
 
-  config(function($stateProvider) {
+  config(['$stateProvider', function($stateProvider) {
 		
 		//----------------	настраиваем роутер состояний приложения -----------------------
 		$stateProvider
@@ -42,6 +42,7 @@ angular
 				views: {
 					'main-centr@' : {
 						templateUrl:'views/dash.tpl.html',
+						controller: 'dashboardCtrl'
 					}
 				}
 				//	resolve доделать
@@ -51,9 +52,9 @@ angular
 				url:'/monitor'
 				
 			})
-			.state('monitor.root', {
+			.state('dash.root', {
 				url:'/:rout/:id'
 			});
 			
 			
-	});
+	}]);

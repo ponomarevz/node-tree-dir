@@ -28,11 +28,11 @@
 			},
 			template: "<li class='menu' ng-switch on='item.attrib.type'>"
 					+"<span ng-switch-when='Group' style='color: orange;' class='glyphicon glyphicon-th-list toogle-b'></span>"
-					+"<small><span ng-class='getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='Device'></span></small>"
+					+"<small><span ng-class='::getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='Device'></span></small>"
 					+"<span ng-switch-when='Device' class='glyphicon glyphicon-cog'></span>"
 					
-					+"<span ng-switch-when='Device' id={{item.attrib.id}} class='caption'  ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}</span>"
-					+"<span ng-switch-when='Group' id={{item.attrib.id}} class= 'caption' ng-click=(toState(item))>{{item.attrib.caption}} {{item.attrib.id}}</span>"
+					+"<span ng-switch-when='Device' id={{item.attrib.id}} class='caption'  ng-click=(toState(item))>{{::item.attrib.caption}} {{::item.attrib.id}} {{::item.attrib.hostname}} {{::item.attrib.ip}}</span>"
+					+"<span ng-switch-when='Group' id={{item.attrib.id}} class= 'caption' ng-click=(toState(item))>{{::item.attrib.caption}} {{::item.attrib.id}}</span>"
 					
 					+"<span style='float: right;' class='down-b glyphicon glyphicon-arrow-down'></span>"
 					+"<div class='submenu'>"
@@ -41,7 +41,7 @@
 						+"<p ng-click='clBut(item)' class='sub-b'>Удалить узел</p>"
 					+"</div>"
 					+"<div ng-if= 'getActivate(item)' class='vidget'>asdasdasd</div>"
-					+"<span>{{item.attrib.name}}</span>"
+					+"<span>{{::item.attrib.name}}</span>"
 				+"</li>",
 			link: function (scope, element, attrs) {
 				
@@ -75,7 +75,7 @@
 			
 			
 			},
-			controller: function($scope, $state) {
+			controller: ['$scope', '$state', function($scope, $state) {
 			
 			
 				//---------------------  функция инициализации нодов -------------------
@@ -169,7 +169,7 @@
 					$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
 				
 					fullState =  $scope.$root.fullState.join('.');
-					$state.go('monitor.root', {'rout': fullState, 'id': item.attrib.id}, {reload:false});
+					$state.go('dash.root', {'rout': fullState, 'id': item.attrib.id}, {reload:false});
 				};
 			
 				//----------нужно для подсвечивания активного элемента
@@ -205,6 +205,6 @@
 				});
 				//{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}
 				watch1(); watch2(); watch3();
-			}
+			}]
 		};
 	});

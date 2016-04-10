@@ -1,11 +1,18 @@
-<div class="panel">
-	<div style="border:1px solid blue;">
-		<h1>Здесь будет админовская вьюха</h1>
-		<p>Здесь мы разместим что то что будет настраивать 
-		наш сканер</p>
-		<hr>
-		<p>Это отдельный шаблон</p>
-	</div>
-	
-</div>
+<!-- DashBoard завернуть в состояние и загружать в центральный виев-->
+<div gridster="dash.grOpt">	<!-- Gridster сетка для dashBorda -->
+	<div ng-repeat = "vidget in dash.dashboards">
+		<!-- Загружаем vidget-u в bootstrap панель todo можна написать свою панель c четом 
+		корпаративных требований к стилям просто переопределить Bootstrap css классы ---->
+		<div class="panel panel-info" gridster-item = "vidget">
+			<div class="panel-heading">
+				<div class="panel-title">{{::vidget.name}}</div>
+				<span ng-click="deleVidget(vidget)" class="panelBdele glyphicon glyphicon-minus"></span> <!-- Кнопка для удалить виджет -->
+			</div>
+			<div style="padding:0; margin:0" class="panel-body">
+				<div ng-include="dash.vidgetesTemplate[vidget.type].url"></div>
+			</div>
+		</div> <!-- end bootstrap panel -->
+	</div> <!-- end ng-repeat vidget -->
+</div> <!-- end gridster -->
+<!--------------- виджеты обернуть в ui-view типа dashboard -->
 
