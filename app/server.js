@@ -172,11 +172,27 @@ var port = process.env.PORT || 3000;
 var router = express.Router();
 
 
-//-------- настраиваем маршрутизатор сервера------------
-router.get('/nodes', function(req, res) {
-	//-------------извлечение всех данных---------------
+//-------- настраиваем маршрутизатор сервера--------
+//-------------извлечение всех данных---------------
+nodesget = router.route('/nodes');
+nodesget.get(function(req, res) {
 	res.json(nodes);
 });
+
+//--------------добавление нода-------------------
+var nodeadd = router.route('/nodes');
+nodeadd.post(function(req, res) {
+		//TODO необходимо сериализировать форму в xml
+		//вызвать метод отправки сообщения ядру
+	console.log(req.body);
+	//---- необходимо подумать над форматом служебных сообщений
+	var mes = {
+		status: 'ok',             //---------статус оаерации
+		message: 'Узел добавлен'  //--------- сообщение по результатам операции
+	};
+	res.json(mes);
+});
+
 	
 app.use('/api', router);
 
@@ -271,4 +287,4 @@ var timerId = setInterval(function() {
 					
   
 			
-}, 500);
+}, 5000);

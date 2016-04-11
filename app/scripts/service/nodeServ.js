@@ -5,15 +5,15 @@
 
 	//-------сервис обслуживающий список узлов системы на клиентской стороне
 	angular.module('netmonApp')
-		.service('nodeServ', nodeServ);
+		.service('nodeServ', ['$q', '$http', '$rootScope', nodeServ]);
 		
-		function nodeServ($http, $rootScope) {
+		function nodeServ($q, $http, $rootScope) {
 			//----------получение cписка Nodow с сервера по AJAX -----------
 			this.getNodes = function() {
 				return $http.get(serverAJAX + 'nodes')
-					.then(function (data) {
+					.then(function (res) {
 						
-						var res =	transform(data.data.node);
+						var res =	transform(res.data.node);
 						return res;
 						//return data.data.node;
 					}, function(err) {
@@ -21,6 +21,25 @@
 						console.log("что то не так");
 					});
 			};
+			//---------------добавление нода в дерево-----------
+			this.addNodes = function(item) {
+				
+				return $http({method: "Post", url: serverAJAX + 'nodes', data: item}).then(function(res){
+					alert(JSON.stringify(res.data));
+					//---- обрабатываем пользователские сообщения
+					//----  в случае успешного web но неуспешного по сути
+					if (res.data.status !='ok') {
+						return $q.reject(new Error(res.data.message));
+					} else {
+						return res;
+					}
+				}, function(err){
+					//------вернуть ошибку-----
+						console.log("что то не так с сервером");
+						return $q.reject(new Error("Что-то не так с сервером"));
+				});
+			}
+			
 			//------------полуучение потока eventov с сервера и генерация сообщения об этом
 			this.createConection = function() {
 				var curSocket = new WebSocket(serverWS);

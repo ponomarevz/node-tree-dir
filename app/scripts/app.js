@@ -61,14 +61,31 @@ angular
 				views: {
 					'dash-right-slide@dash' : {
 						templateUrl:'views/itemAdd.tpl.html',
-						controller: function($scope){
-							
+						controller: ['nodeServ', '$scope', function(nodeServ, $scope){
+							//-------------- убрать отсюда
 							$scope.itemType = [
 								{title: "Група" , zn: 'Group' },
 								{title: "Устройство" , zn: 'Device' }
 							];
 							
-						}
+							$scope.addItem = function(itemform, item){
+								if(itemform.$valid) {
+									//----- посылаем запрос на сервер для добавления элемента
+									nodeServ.addNodes(item).then(function(data){
+										alert(data);
+										//----- в случае успеха делаем переход на состояние
+										//----- эммитируем событие на верх скопа, для того что бы обновить модель
+										$scope.$emit('additem');
+									}, function(err){
+										//-----в случае неудачи говорим что не так
+										alert(err);
+									});
+
+								}
+								
+							}
+							//-------------- убрать отсюда
+						}]
 					}
 				}
 			});
