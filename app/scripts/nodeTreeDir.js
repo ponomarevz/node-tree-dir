@@ -36,11 +36,11 @@
 					
 					+"<span style='float: right;' class='down-b glyphicon glyphicon-arrow-down'></span>"
 					+"<div class='submenu'>"
-						+"<p ng-click='clBut(item)' class='sub-b'>Редактировать узел</p>"
-						+"<p ng-click='clBut(item)' class='sub-b'>Добавить узел</p>"
-						+"<p ng-click='clBut(item)' class='sub-b'>Удалить узел</p>"
+						+"<p ng-click='::editItem(item)' class='sub-b'>Редактировать узел</p>"
+						+"<p ng-click='::addItem(item)' class='sub-b'>Добавить узел</p>"
+						+"<p ng-click='::clBut(item)' class='sub-b'>Удалить узел</p>"
 					+"</div>"
-					+"<div ng-if= 'getActivate(item)' class='vidget'>asdasdasd</div>"
+								+"<!-- <div ng-if= 'getActivate(item)' class='vidget'>asdasdasd</div> -->"
 					+"<span>{{::item.attrib.name}}</span>"
 				+"</li>",
 			link: function (scope, element, attrs) {
@@ -70,10 +70,7 @@
 					}
 					event.stopPropagation();
 				});
-				
-				
-			
-			
+						
 			},
 			controller: ['$scope', '$state', function($scope, $state) {
 			
@@ -124,7 +121,7 @@
 												
 					$scope.$root.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 					//-------------класс для субактив нужно перед изменением состояния его плавно свернуть
-						rootAngularElem.find('.sub-active.vidget').toggleClass('sub-active'); 
+						                          //rootAngularElem.find('.sub-active.vidget').toggleClass('sub-active'); 
 						rootAngularElem.find('.sub-active').toggleClass('sub-active');
 					});
 				
@@ -169,7 +166,7 @@
 					$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
 				
 					fullState =  $scope.$root.fullState.join('.');
-					$state.go('dash.root', {'rout': fullState, 'id': item.attrib.id}, {reload:false});
+					$state.go('dash.root', {'rout': fullState, 'id': item.attrib.id});
 				};
 			
 				//----------нужно для подсвечивания активного элемента
@@ -188,11 +185,15 @@
 					return item.attrib.cl;
 				};
 			
-				$scope.clBut = function(item){
+				//$scope.clBut = function(item){
 		
-					angular.element(document.body).find('.vidget').toggleClass('sub-active'); 
-				};
+				//	angular.element(document.body).find('.vidget').toggleClass('sub-active'); 
+				//};
 				//--------------отключаем лишний вотчер нужно тестировать--------
+				
+				$scope.addItem = function(item) {
+					$state.go('dash.root.add');
+				}
 			
 				var watch1 = $scope.$watch('item.attrib.id', function(newV, oldW) {
 				

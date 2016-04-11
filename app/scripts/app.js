@@ -54,6 +54,23 @@ angular
 			})
 			.state('dash.root', {
 				url:'/:rout/:id'
+			})
+			.state('dash.root.add', {
+				url:'/add',
+				//----------------вложенній ui-view='dash-right-slide' для вложеного состояния add в состоянии dash 
+				views: {
+					'dash-right-slide@dash' : {
+						templateUrl:'views/itemAdd.tpl.html',
+						controller: function($scope){
+							
+							$scope.itemType = [
+								{title: "Група" , zn: 'Group' },
+								{title: "Устройство" , zn: 'Device' }
+							];
+							
+						}
+					}
+				}
 			});
 			
 			

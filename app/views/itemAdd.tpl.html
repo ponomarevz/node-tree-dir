@@ -1,0 +1,34 @@
+<div class="slide-menu">
+    
+    <div class = "container-fluid">
+		<div class="slide-shaddow "></div>
+		<div class="slide-item">	
+			<h4>Добавить узел</h4>
+			<form role="form" name="itemform">
+				<div  class="form-group" ng-class="{'has-error': itemform.caption.$invalid }">
+					<small><label for="title">Описание узла</label></small>
+					<input id="caption" type="text" ng-model="al.caption" class="form-control" name="caption" placeholder="Название узла" required ng-pattern="/^[a-zA-ZА-Яа-яІіЇїЄє0-9 ,:;.]*$/" ng-minlength = 2 ng-maxlength=15>
+				</div>
+			
+				<div  class="form-group" ng-class="{'has-error': itemform.type.$invalid }">
+					<small><label for="type">Тип узла</label></small>
+					<select ng-model="al.type" class="form-control" name="type" id="type" required
+						ng-options="item.title for item in itemType">
+					</select>
+				</div>
+				
+				<div  class="form-group" ng-class="{'has-error': itemform.hostname.$invalid }">
+					<small><label for="title">Hostname</label></small>
+					<input id="hostname" type="text" ng-model="al.hostname" class="form-control" name="hostname" placeholder="Hostname" required ng-pattern="/^[a-zA-ZА-Яа-яІіЇїЄє0-9 ,:;.]*$/" ng-minlength = 2 ng-maxlength=15>
+				</div>
+				
+				<div  class="form-group" ng-class="{'has-error': itemform.ipaddress.$invalid }">
+					<small><label for="ipaddress">Ip-адрес</label></small>
+					<input id="ipaddress" type="text" ng-model="al.ipaddress" class="form-control" name="ipaddress" placeholder="Ip-адрес" required ng-pattern="/^[a-zA-ZА-Яа-яІіЇїЄє0-9 ,:;.]*$/" ng-minlength = 2 ng-maxlength=15>
+				</div>
+				
+															
+				<button class="btn btn-success" style= "margin-top:5px;" ui-sref="dash">Назад</button> <!--- пофиксить назад -->
+				<button class="btn btn-success" style= "margin-top:5px;" ng-click="addAlbum.addAlbum(itemform, al)">Добавить альбом</button>
+			</form>
+		</div>
