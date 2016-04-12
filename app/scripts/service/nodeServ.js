@@ -58,9 +58,9 @@
 								"id": id + "", //---------приведение типов в JS это круто 
 								"ip": item.ipaddress,
 								"hostname": item.hostname,
-								"caption": item.caption,
-								"parentId": []
-							}
+								"caption": item.caption
+							},
+							"parentId": []
 						};
 						
 						if (item.type.zn == "Group") { //---------eсли node Group то добавляем subitem
@@ -144,6 +144,9 @@
 		//------------ функция трансформирующия дерево и строит hesh Nodov
 		// 1.строить хеш без Нодес меньше кода, более читаемо
  		// 2. сделать корневой фолдер (должен быть, при добавлениие это важно)
+		// 3. метод добавить удалить узел переместить узел 
+		//
+		//
 		function buildHash(rawc){
 			var res = {};
 				var i;
@@ -167,13 +170,13 @@
 						var k;
 						res[i].nodes = {};
 						for (k in res[i].subitem) {
-							var key = res[i].subitem[k].attrib.name;
+							var key = res[i].subitem[k].attrib.name; //Node.N
 							
 							if (res[key]) {
 								res[i].nodes[key] = res[key];
 									
 								res[key].dele = true;
-								res[key].parentId = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+								res[key].parentId.push(res[i].attrib.id);// = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
 							} else {
 								delete res[i].subitem[k];
 								// наверное удалить subitem
