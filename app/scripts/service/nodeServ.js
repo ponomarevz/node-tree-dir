@@ -8,13 +8,25 @@
 		.service('nodeServ', ['$q', '$http', '$rootScope', nodeServ]);
 		
 		function nodeServ($q, $http, $rootScope) {
+			
+			var resultNodesHash; //------храним исходный со ссылками просто искать по ID
+			var resultNodesTree; // ----кеширована версия нодов для теста
+			
+			
+			this.updateNodes = function() {
+				//перестраиваем дерево по хешу
+				console.log(JSON.stringify(resultNodesHash));
+				return transform(resultNodesHash);
+			}
+			
 			//----------получение cписка Nodow с сервера по AJAX -----------
 			this.getNodes = function() {
 				return $http.get(serverAJAX + 'nodes')
 					.then(function (res) {
 						
-						var res =	transform(res.data.node);
-						return res;
+						resultNodesHash = buildHash(res.data.node);
+						resultNodesTree =	transform(resultNodesHash); //------строим дерево
+						return resultNodesTree;
 						//return data.data.node;
 					}, function(err) {
 						//------вернуть ошибку-----
@@ -22,21 +34,87 @@
 					});
 			};
 			//---------------добавление нода в дерево-----------
-			this.addNodes = function(item) {
+			this.addNodes = function(item, parentId) {
 				
 				return $http({method: "Post", url: serverAJAX + 'nodes', data: item}).then(function(res){
-					alert(JSON.stringify(res.data));
+					//alert(JSON.stringify(res.data));
 					//---- обрабатываем пользователские сообщения
 					//----  в случае успешного web но неуспешного по сути
 					if (res.data.status !='ok') {
 						return $q.reject(new Error(res.data.message));
 					} else {
+						
+												
+						//-----------функция для генерации случаного числа из диапазона
+								function getRandomInt(min, max) {
+								  return Math.floor(Math.random() * (max - min + 1)) + min;
+								}
+								var id = getRandomInt(120, 150);
+						
+						//-------   создаем узел --------------------
+						var node = {
+							"attrib":{
+								"type": item.type.zn,
+								"id": id,
+								"ip": item.ipaddress,
+								"hostname": item.hostname,
+								"caption": item.caption,
+								"parentId": []
+							}
+						};
+						
+						if (item.type.zn == "Group") { //---------eсли node Group то добавляем subitem
+							node.subitem = [];
+						}
+						//-------   создаем узел --------------------
+						
+						//------------добавляем объект в Хеш
+						resultNodesHash['Node.'+ id] = node;
+						var subitRef = {
+							attrib: {
+								"name": 'Node.'+ id
+							}
+						};
+						
+					//var parentNode =  resultNodesHash['Node.'+ parentId].attrib == "Group" ? resultNodesHash['Node.'+ parentId].subitem : resultNodesHash[ resultNodesHash['Node.'+ parentId].parentId[ resultNodesHash['Node.'+ parentId].parentId.length - 1 ] ].subitem;
+						var parentNode;
+						console.log(parentId);
+						if (resultNodesHash['Node.'+ parentId].attrib.type == "Group") {
+							parentNode =  resultNodesHash['Node.'+ parentId].subitem;
+						} else {
+							var par = resultNodesHash['Node.'+ parentId].parentId;
+							var parId = par[par.length - 1]; 
+							parentNode =  resultNodesHash['Node.' + parId].subitem;
+						};
+						
+						parentNode.unshift(subitRef);
+						
+						console.log( resultNodesHash['Node.'+ parentId]);
 						return res;
 					}
 				}, function(err){
 					//------вернуть ошибку-----
 						console.log("что то не так с сервером");
 						return $q.reject(new Error("Что-то не так с сервером"));
+				});
+			};
+			
+			this.deleteNodes = function(item){
+				var itId = item.attrib.id;
+				return $http({method: "DELETE", url: serverAJAX + 'nodes' +itId }).then(function(res){
+					
+					if(res.data.status !='ok') {
+						$q.reject(new Error(res.data.message));
+					} else {
+							//-----------ДАЛЯМ НОД ИЗ ХЕША ---
+							delete resultNodesHash['Node.'+ itId];
+						
+						return res;
+					}
+				}, function(err){
+					//------вернуть ошибку-----
+						console.log("что то не так с сервером");
+						return $q.reject(new Error("Что-то не так с сервером при удалении"));
 				});
 			}
 			
@@ -62,10 +140,9 @@
 		
 		
 		//------------ функция трансформирующия дерево и строит hesh Nodov
-		function transform(rawc) {
-			
-				var res = {};
-				var result = {};
+		
+		function buildHash(rawc){
+			var res = {};
 				var i;
 				//строим хеш наверное делать на єтапе парсинга ][ml н сервере
 				for (i in rawc) {
@@ -74,32 +151,49 @@
 					
 									res[key].parentId = [];
 				}
-				
+				return res;
+		};
+		function transform(res) {
+			
+				var result = {};
+				var i;
+								
 				for (i in res) {
-					
+					try{
 					if (res[i].attrib.type === 'Group') {
 						var k;
 						res[i].nodes = {};
 						for (k in res[i].subitem) {
 							var key = res[i].subitem[k].attrib.name;
-							res[i].nodes[key] = res[key];
-								
-							res[key].dele = true;
-							res[key].parentId = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+							
+							if (res[key]) {
+								res[i].nodes[key] = res[key];
+									
+								res[key].dele = true;
+								res[key].parentId = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+							} else {
+								delete res[i].subitem[k];
+								// наверное удалить subitem
+							}
 								
 						  //console.log(key);
 						}
 					}
+					} catch(err){
+							console.log(res[i]);
+							console.log(res[i]['attrib']);
+					}
 				}
 				for (i in res) {
-					if (!res[i].dele) {
+					if (!res[i].dele) { // сделать не dele а isSubitem является ли он SubItemom
 						result[i] = res[i];
 					}
 					
 				}
 				//console.log(res);
-				return result;
-			}
+				return  result;
+				
+		}
 })();
 
 

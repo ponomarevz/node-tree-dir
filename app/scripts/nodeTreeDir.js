@@ -38,7 +38,7 @@
 					+"<div class='submenu'>"
 						+"<p ng-click='::editItem(item)' class='sub-b'>Редактировать узел</p>"
 						+"<p ng-click='::addItem(item)' class='sub-b'>Добавить узел</p>"
-						+"<p ng-click='::clBut(item)' class='sub-b'>Удалить узел</p>"
+						+"<p ng-click='::deleteItem(item)' class='sub-b'>Удалить узел</p>"
 					+"</div>"
 								+"<!-- <div ng-if= 'getActivate(item)' class='vidget'>asdasdasd</div> -->"
 					+"<span>{{::item.attrib.name}}</span>"
@@ -72,7 +72,7 @@
 				});
 						
 			},
-			controller: ['$scope', '$state', function($scope, $state) {
+			controller: ['$scope', '$state', 'nodeServ', function($scope, $state, nodeServ) {
 			
 			
 				//---------------------  функция инициализации нодов -------------------
@@ -138,7 +138,9 @@
 						
 				//----------------- реагирует на клик мішки на єлементе 
 				//----------и строит маршрут состояния и переводит приложение в него
-				$scope.toState = function(item) {
+				
+				//------------------------------функция построения состояния по текущему ITEM 
+				var getState = function(item) {
 					var curState = item.parentId;
 					var curId = item.attrib.id;
 					
@@ -166,7 +168,12 @@
 					$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
 				
 					fullState =  $scope.$root.fullState.join('.');
-					$state.go('dash.root', {'rout': fullState, 'id': item.attrib.id});
+					return {'rout': fullState, 'id': item.attrib.id};
+				}
+				
+				$scope.toState = function(item) {
+					
+					$state.go('dash.root',  getState(item));
 				};
 			
 				//----------нужно для подсвечивания активного элемента
@@ -192,20 +199,19 @@
 				//--------------отключаем лишний вотчер нужно тестировать--------
 				
 				$scope.addItem = function(item) {
+					//alert(JSON.stringify(getState(item)));
 					$state.go('dash.root.add');
 				}
+				//------------удаление объекта
+				$scope.deleteItem = function(item) {
+					nodeServ.deleteNodes(item).then(function(res){
+						//--------чтото сделать с удаленным объектом исправить модель если все ок
+						var state = getState(item); state.id =0;
+						$state.go('dash.root', state); // нужно делать не стате го, а url replace
+						$scope.$emit('updatenodes'); // генерирует событие наверх для того чтобы кто то обновил модель
+					});
+				}
 			
-				var watch1 = $scope.$watch('item.attrib.id', function(newV, oldW) {
-				
-				});
-				var watch2 = $scope.$watch('item.attrib.hostname', function(newV, oldW) {
-				
-				});
-				var watch3 = $scope.$watch('item.attrib.ip', function(newV, oldW) {
-				
-				});
-				//{{item.attrib.caption}} {{item.attrib.id}} {{item.attrib.hostname}} {{item.attrib.ip}}
-				watch1(); watch2(); watch3();
 			}]
 		};
 	});

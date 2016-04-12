@@ -24,10 +24,19 @@ angular.module('netmonApp')
 			//----потестить диррективу stop propogation в директиве
 		};
 		
+		//-инициализация нодов при загрузке
 		nodeServ.getNodes().then(function(data){
 			$scope.nodes = data;
-			
+		}, function(){
+			//----------инициализировать статус бар где отобразить ошибку
 		});
+		
+		//----------- слушает событие deletenode и обновляет модель
+		//----------- может назвать не делете а гзвфеу
+		$scope.$on('updatenodes', function(){
+			$scope.nodes = nodeServ.updateNodes();
+		});
+		
 		
 		
 				
@@ -61,8 +70,9 @@ angular.module('netmonApp')
 		});
 		
 		//---------------данный блок нужно будет перенести в контроллер диррективы events что бы он там крутился
-		$scope.$root.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+		$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
 			$scope.curentId = $state.params.id;
+			$scope.curentRoot = $state.params.id;
 		
 		});
 		$scope.getCl = function(item){

@@ -61,7 +61,7 @@ angular
 				views: {
 					'dash-right-slide@dash' : {
 						templateUrl:'views/itemAdd.tpl.html',
-						controller: ['nodeServ', '$scope', function(nodeServ, $scope){
+						controller: ['nodeServ', '$scope', '$state', function(nodeServ, $scope, $state){
 							//-------------- убрать отсюда
 							$scope.itemType = [
 								{title: "Група" , zn: 'Group' },
@@ -69,13 +69,14 @@ angular
 							];
 							
 							$scope.addItem = function(itemform, item){
+								//$scope.curentId Будет парентом нужно если не если Група то ок добавляем сюда если не група то тоже ок смотрим кто у него парент и вставляем туда
 								if(itemform.$valid) {
 									//----- посылаем запрос на сервер для добавления элемента
-									nodeServ.addNodes(item).then(function(data){
-										alert(data);
+									nodeServ.addNodes(item, $scope.curentId).then(function(data){
 										//----- в случае успеха делаем переход на состояние
 										//----- эммитируем событие на верх скопа, для того что бы обновить модель
-										$scope.$emit('additem');
+											$scope.returnState(); //----------- переходим в исходное состояние
+										$scope.$emit('updatenodes'); //--------данный метод нужен для отправки события на верхний скоп для того чтобы там сгенерировать обработчик обновления модели
 									}, function(err){
 										//-----в случае неудачи говорим что не так
 										alert(err);
@@ -85,6 +86,11 @@ angular
 								
 							}
 							//-------------- убрать отсюда
+							//---------кнопка возврата состояния
+							$scope.returnState = function() {
+								$state.go('dash.root');							
+							};
+
 						}]
 					}
 				}
