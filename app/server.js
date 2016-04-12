@@ -195,7 +195,7 @@ nodeadd.post(function(req, res) {
 });
 
 //--------------удаление нода-------------------
-var nodedelete = router.route('/nodes:id');
+var nodedelete = router.route('/nodes/:id');
 nodedelete.delete(function(req, res) {
 	var id = req.params.id
 		//TODO необходимо сериализировать форму в xml

@@ -1,5 +1,7 @@
 'use strict';
 
+//--- 1.я проблема: 1 и тот же нод (одинаковый ID) может быть в 2x групах, а это нужно пофиксить 
+
 //------------------рсивная дирректива построения дерева		
 	
 	angular.module('netmonApp')
@@ -147,8 +149,10 @@
 					var fullState;
 					
 					if (item.attrib.type == 'Group') {
-						
+						console.log(curId);
+						console.log($scope.$root.fullState);
 						var index = $scope.$root.fullState.indexOf(curId);
+						console.log(index);
 						if (index <= -1) {
 							curState = curState.concat(item.attrib.id);
 						} else {
@@ -156,6 +160,8 @@
 							$scope.$root.fullState.splice(index, 1);
 						}
 					}
+					
+					
 					//-------- curState содержит id всех перентов выделенного итема
 					//--------curStateFilter содержит id всех перентов которых нет в $scope.$root.fullState
 					//---------$scope.$root.fullState содержит id всех открытых вложеных груп нодов

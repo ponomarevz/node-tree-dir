@@ -55,7 +55,7 @@
 						var node = {
 							"attrib":{
 								"type": item.type.zn,
-								"id": id,
+								"id": id + "", //---------приведение типов в JS это круто 
 								"ip": item.ipaddress,
 								"hostname": item.hostname,
 								"caption": item.caption,
@@ -76,20 +76,22 @@
 							}
 						};
 						
-					//var parentNode =  resultNodesHash['Node.'+ parentId].attrib == "Group" ? resultNodesHash['Node.'+ parentId].subitem : resultNodesHash[ resultNodesHash['Node.'+ parentId].parentId[ resultNodesHash['Node.'+ parentId].parentId.length - 1 ] ].subitem;
+					
 						var parentNode;
 						console.log(parentId);
 						if (resultNodesHash['Node.'+ parentId].attrib.type == "Group") {
 							parentNode =  resultNodesHash['Node.'+ parentId].subitem;
-						} else {
+						} else if (resultNodesHash['Node.'+ parentId].parentId.length != 0) {
 							var par = resultNodesHash['Node.'+ parentId].parentId;
 							var parId = par[par.length - 1]; 
 							parentNode =  resultNodesHash['Node.' + parId].subitem;
+						} else {
+							console.log("--------------------");
 						};
 						
-						parentNode.unshift(subitRef);
+						parentNode ? parentNode.unshift(subitRef) : false;
 						
-						console.log( resultNodesHash['Node.'+ parentId]);
+						
 						return res;
 					}
 				}, function(err){
@@ -101,7 +103,7 @@
 			
 			this.deleteNodes = function(item){
 				var itId = item.attrib.id;
-				return $http({method: "DELETE", url: serverAJAX + 'nodes' +itId }).then(function(res){
+				return $http({method: "DELETE", url: serverAJAX + 'nodes/' +itId }).then(function(res){
 					
 					if(res.data.status !='ok') {
 						$q.reject(new Error(res.data.message));
@@ -140,7 +142,8 @@
 		
 		
 		//------------ функция трансформирующия дерево и строит hesh Nodov
-		
+		// 1.строить хеш без Нодес меньше кода, более читаемо
+ 		// 2. сделать корневой фолдер (должен быть, при добавлениие это важно)
 		function buildHash(rawc){
 			var res = {};
 				var i;
@@ -148,18 +151,18 @@
 				for (i in rawc) {
 					var key = 'Node.'+rawc[i].attrib.id;
 					res[key] = rawc[i]; 
-					
-									res[key].parentId = [];
+					res[key].parentId = [];
 				}
 				return res;
 		};
+		
 		function transform(res) {
 			
 				var result = {};
 				var i;
 								
 				for (i in res) {
-					try{
+					
 					if (res[i].attrib.type === 'Group') {
 						var k;
 						res[i].nodes = {};
@@ -179,10 +182,7 @@
 						  //console.log(key);
 						}
 					}
-					} catch(err){
-							console.log(res[i]);
-							console.log(res[i]['attrib']);
-					}
+					
 				}
 				for (i in res) {
 					if (!res[i].dele) { // сделать не dele а isSubitem является ли он SubItemom
