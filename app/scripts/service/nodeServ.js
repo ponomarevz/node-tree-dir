@@ -1,7 +1,7 @@
 'use strict';
 (function(){
 	var serverAJAX = "http://localhost:3000/api/";
-	var serverWS = "ws://localhost:8081";
+	var serverWS = "ws://localhost:8082";
 
 	//-------сервис обслуживающий список узлов системы на клиентской стороне
 	angular.module('netmonApp')
@@ -15,7 +15,7 @@
 			
 			this.updateNodes = function() {
 				//перестраиваем дерево по хешу
-				console.log(JSON.stringify(resultNodesHash));
+			//	console.log(JSON.stringify(resultNodesHash));
 				return transform(resultNodesHash);
 			}
 			
@@ -26,6 +26,7 @@
 						
 						resultNodesHash = buildHash(res.data.node);
 						resultNodesTree =	transform(resultNodesHash); //------строим дерево
+						console.log(res.data.node);
 						return resultNodesTree;
 						//return data.data.node;
 					}, function(err) {
@@ -63,7 +64,7 @@
 							"parentId": []
 						};
 						
-						if (item.type.zn == "Group") { //---------eсли node Group то добавляем subitem
+						if (item.type.zn == "GROUP") { //---------eсли node Group то добавляем subitem
 							node.subitem = [];
 						}
 						//-------   создаем узел --------------------
@@ -75,11 +76,10 @@
 								"name": 'Node.'+ id
 							}
 						};
-						
-					
+											
 						var parentNode;
 						console.log(parentId);
-						if (resultNodesHash['Node.'+ parentId].attrib.type == "Group") {
+						if (resultNodesHash['Node.'+ parentId].attrib.type == "GROUP") {
 							parentNode =  resultNodesHash['Node.'+ parentId].subitem;
 						} else if (resultNodesHash['Node.'+ parentId].parentId.length != 0) {
 							var par = resultNodesHash['Node.'+ parentId].parentId;
@@ -131,12 +131,26 @@
 					//curSocket.send(JSON.stringify({'type': 'getfolder', 'path': 'd:/test'}));
 				};
 				
-				//--------обработчик поступления соедения--------
+				//--------обработчик поступления сообщений по сокету--------
 				curSocket.onmessage = function(message) {
-					//console.log(message.data);
-					$rootScope.$broadcast('eventJadro', JSON.parse(message.data).eventinstance[0]);
-				};
+					
+					//----console.log(message.data);
+					var obj = JSON.parse(message.data)
+					
+					if (obj.eventinstance) {
+						console.log("event now");
+						$rootScope.$broadcast('J_eventinstance', obj.eventinstance);
+					} if (obj.node) {
+						console.log("node now");
+						var hashIndex = 'Node.' + obj.node.attrib.id;
+						obj.node.parentId = [];
+						resultNodesHash[hashIndex] = obj.node;
+						$rootScope.$broadcast('J_node', obj.node);
+					}
+					
+				};//---- закрытие обработчика событий сокет
 						
+			
 			}
 		};
 		
@@ -166,7 +180,7 @@
 								
 				for (i in res) {
 					
-					if (res[i].attrib.type === 'Group') {
+					if (res[i].attrib.type === 'GROUP') {
 						var k;
 						res[i].nodes = {};
 						var t0 = performance.now();

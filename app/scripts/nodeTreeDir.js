@@ -29,14 +29,14 @@
 				rootid: '='
 			},
 			template: "<li class='menu' ng-switch on='item.attrib.type'>"
-					+"<span ng-switch-when='Group' style='color: orange;' class='glyphicon glyphicon-th-list toogle-b'></span>"
-					+"<small><span ng-class='::getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='Device'></span></small>"
-					+"<span ng-switch-when='Device' class='glyphicon glyphicon-cog'></span>"
+					+"<span ng-switch-when='GROUP' style='color: orange;' class='glyphicon glyphicon-th-list toogle-b'></span>"
+					+"<small><span ng-class='getCl(item, evjdro )' class='glyphicon glyphicon-record' ng-switch-when='DEVICE'></span></small>"
+					+"<span ng-switch-when='DEVICE' class='glyphicon glyphicon-cog'></span>"
 					
-					+"<span ng-switch-when='Device' id={{item.attrib.id}} class='caption'  ng-click=(toState(item))>{{::item.attrib.caption}} {{::item.attrib.id}} {{::item.attrib.hostname}} {{::item.attrib.ip}}</span>"
-					+"<span ng-switch-when='Group' id={{item.attrib.id}} class= 'caption' ng-click=(toState(item))>{{::item.attrib.caption}} {{::item.attrib.id}}</span>"
+					+"<span ng-switch-when='DEVICE' id={{item.attrib.id}} class='caption'  ng-click=(toState(item))>{{::item.attrib.caption}} {{::item.attrib.id}} {{::item.attrib.hostname}} {{::item.attrib.ip}}</span>"
+					+"<span ng-switch-when='GROUP' id={{item.attrib.id}} class= 'caption' ng-click=(toState(item))>{{::item.attrib.caption}} {{::item.attrib.id}}</span>"
 					
-					+"<span style='float: right;' class='down-b glyphicon glyphicon-arrow-down'></span>"
+					+"<span style='float: right; margin-right:10px;' class='down-b glyphicon glyphicon-arrow-down'></span>"
 					+"<div class='submenu'>"
 						+"<p ng-click='::editItem(item)' class='sub-b'>Редактировать узел</p>"
 						+"<p ng-click='::addItem(item)' class='sub-b'>Добавить узел</p>"
@@ -47,7 +47,7 @@
 				+"</li>",
 			link: function (scope, element, attrs) {
 				
-				if (scope.item.attrib.type == 'Group') {
+				if (scope.item.attrib.type == 'GROUP') {
 				
 					var templ = "<nodes id={{item.attrib.id+'toggle'}} class='toogle' evjdro='evjdro' nodes='item.nodes'></nodes>";
 					element.append(templ); 
@@ -148,7 +148,7 @@
 					
 					var fullState;
 					
-					if (item.attrib.type == 'Group') {
+					if (item.attrib.type == 'GROUP') {
 						console.log(curId);
 						console.log($scope.$root.fullState);
 						var index = $scope.$root.fullState.indexOf(curId);
@@ -193,7 +193,7 @@
 				$scope.getCl = function(item, evjdro) {
 					//	console.log("еще производит");
 					if (item.attrib.id == evjdro.id) {
-						item.attrib.cl = evjdro.status == 1 ? 'indicat-onn':'indicat-off';
+						item.attrib.cl = evjdro.status === 'SUCCESS' ? 'indicat-onn':'indicat-off';
 					}
 					return item.attrib.cl;
 				};

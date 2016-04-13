@@ -12,7 +12,7 @@ angular.module('netmonApp')
 		$scope.selIt;
 		$scope.nodes;
 		$scope.evJdro={}; 
-		$scope.evJdro.status ="1";
+		$scope.evJdro.status;
 		$scope.events = {};
 		//----------- если работает пересмотреть ))))
 		$scope.events.curentId = $state.params.id;
@@ -41,8 +41,8 @@ angular.module('netmonApp')
 		
 				
 		nodeServ.createConection();
-		
-		$scope.$on('eventJadro', function(event, res) {
+		//-------------------обработчик для входящих событий eventinstance
+		$scope.$on('J_eventinstance', function(event, res) {
 			//					console.log("--------------------")
 			//---------- этот обработчик по сути включает режим монииторинга входящих событий
 			//1. так как событий может быть много необходимо подумать о стеке и его реализации
@@ -50,6 +50,7 @@ angular.module('netmonApp')
 			//	т.е. отключить это монитор и реализовать загрузку данных в виджеты с пагинацией
 				
 			$scope.evJdro.status = res.attrib.status;
+			console.log( res.attrib);
 			var id = res.attrib.node.split(".")[1];
 			$scope.evJdro.id = id;
 				//----------- вот это все нужно будет продумать сделать стеком на опрделенное количество записей
@@ -69,6 +70,19 @@ angular.module('netmonApp')
 			$scope.$apply();
 		});
 		
+		//-------------------обработчик для входящих событий node
+		$scope.$on('J_node', function(event, res) {
+			//---------почему так нужно делать пока незнаю но обновление объекта
+			//---------добавление и удаление происходит нормально, а вот обновление падает
+			//-------- сделал такой хак
+				delete $scope.nodes;
+				$scope.$apply();
+				$scope.nodes = nodeServ.updateNodes(); //---- перестраивает дерево по хешу и обновляем модель
+				$scope.$apply();
+				console.log($scope.nodes);
+		});
+		
+		
 		//---------------данный блок нужно будет перенести в контроллер диррективы events что бы он там крутился
 		$scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
 			$scope.curentId = $state.params.id;
@@ -76,7 +90,7 @@ angular.module('netmonApp')
 		
 		});
 		$scope.getCl = function(item){
-			return item.attrib.status == 1 ? 'indicat-onn':'indicat-off';
+			return item.attrib.status == 'SUCCESS' ? 'indicat-onn':'indicat-off';
 		};
 		//---------------данный блок нужно будет перенести в контроллер диррективы events что бы он там крутился
 		//---------------данный блок нужно будет перенести в контроллер диррективы addVidget что бы он там крутился

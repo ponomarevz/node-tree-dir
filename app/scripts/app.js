@@ -64,8 +64,8 @@ angular
 						controller: ['nodeServ', '$scope', '$state', function(nodeServ, $scope, $state){
 							//-------------- убрать отсюда
 							$scope.itemType = [
-								{title: "Група" , zn: 'Group' },
-								{title: "Устройство" , zn: 'Device' }
+								{title: "Група" , zn: 'GROUP' },
+								{title: "Устройство" , zn: 'DEVICE' }
 							];
 							
 							$scope.addItem = function(itemform, item){
