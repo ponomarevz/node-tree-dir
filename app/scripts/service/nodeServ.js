@@ -169,14 +169,16 @@
 					if (res[i].attrib.type === 'Group') {
 						var k;
 						res[i].nodes = {};
+						var t0 = performance.now();
 						for (k in res[i].subitem) {
 							var key = res[i].subitem[k].attrib.name; //Node.N
 							
 							if (res[key]) {
-								res[i].nodes[key] = res[key];
+								var obj = res[key];
+								res[i].nodes[key] = obj;
 									
-								res[key].dele = true;
-								res[key].parentId.push(res[i].attrib.id);// = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+								obj.dele = true;
+								obj.parentId.push(res[i].attrib.id);// = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
 							} else {
 								delete res[i].subitem[k];
 								// наверное удалить subitem
@@ -184,6 +186,8 @@
 								
 						  //console.log(key);
 						}
+						var t1 = performance.now();
+						console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:', result);
 					}
 					
 				}
