@@ -58,7 +58,6 @@ var xml = "<entry>"+
 		+ "<subitem name='Node.10'></subitem>"
 		+ "<subitem name='Node.11'></subitem>"
 		+ "<subitem name='Node.17'></subitem>"
-		
 		+ "<subitem name='Node.48'></subitem>"
 		+ "<subitem name='Node.49'></subitem>"
 		+ "<subitem name='Node.50'></subitem>"
