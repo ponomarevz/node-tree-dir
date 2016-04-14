@@ -208,13 +208,14 @@
 					//alert(JSON.stringify(getState(item)));
 					$state.go('dash.root.add');
 				}
-				//------------удаление объекта
+				
+				//------------удаление объекта УБРАТЬ ЭТО ОТСЮДА НАХРЕН только переход на состояние
 				$scope.deleteItem = function(item) {
-					nodeServ.deleteNodes(item).then(function(res){
+					nodeServ.removeNodeSend(item).then(function(res){
 						//--------чтото сделать с удаленным объектом исправить модель если все ок
 						var state = getState(item); state.id =0;
 						$state.go('dash.root', state); // нужно делать не стате го, а url replace
-						$scope.$emit('updatenodes'); // генерирует событие наверх для того чтобы кто то обновил модель
+						
 					});
 				}
 			

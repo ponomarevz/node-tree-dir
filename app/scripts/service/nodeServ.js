@@ -9,164 +9,127 @@
 		
 		function nodeServ($q, $http, $rootScope) {
 			
-			var resultNodesHash; //------храним исходный со ссылками просто искать по ID
-			var resultNodesTree; // ----кеширована версия нодов для теста
+			var resultNodesHash; //------храним исходный со ссылками просто искать по ID------
+			var resultNodesTree; // --------кеширована версия нодов для теста-----------------
 			
-			
-			this.updateNodes = function() {
-				//перестраиваем дерево по хешу
-			//	console.log(JSON.stringify(resultNodesHash));
-				return transform(resultNodesHash);
-			}
-			
-			//----------получение cписка Nodow с сервера по AJAX -----------
+			//----------------------получение cписка Nodow с сервера по AJAX --------------------------------
+			//----------------------------хеширование и построение дерева------------------------------------
 			this.getNodes = function() {
 				return $http.get(serverAJAX + 'nodes')
 					.then(function (res) {
-						
-						resultNodesHash = buildHash(res.data.node);
-						resultNodesTree =	transform(resultNodesHash); //------строим дерево
+						console.log(res.data.node);
+						resultNodesHash = buildHash(res.data.node);     //------формируем хеш по сырым данным
+						resultNodesTree =	transform(resultNodesHash); //------------строим дерево
 						console.log(res.data.node);
 						return resultNodesTree;
-						//return data.data.node;
 					}, function(err) {
 						//------вернуть ошибку-----
 						console.log("что то не так");
 					});
 			};
-			//---------------добавление нода в дерево-----------
-			this.addNodes = function(item, parentId) {
+			
+			//--------------- метод принимает нод(обект) и встаривает его внужное место дерева ----------------
+			//--------------- сначала обновляет хеш, потом по обновленному хешу перестраивает дерево ----------
+			//--------------- возвращает результирующие дерево, для формирование модели------------------------
+			this.updateNode = function(node) {
+				//	console.log(JSON.stringify(resultNodesHash));
+				var node_name = 'NODE.' + node.attrib.id;
+				node.parentId = []; //---------- парент ID пока так
+				resultNodesHash[node_name] = node;
+				return transform(resultNodesHash);
+			};
+			//--------------- метод принимает иимя нода и удаляет его из хеша---------- -----------------------
+			//--------------- сначала обновляет хеш, потом по обновленному хешу перестраивает дерево ----------
+			//--------------- возвращает результирующие дерево, для формирование модели------------------------
+			this.removeNode = function(node_name) {
+				//	console.log(JSON.stringify(resultNodesHash));
+				delete resultNodesHash[node_name];
+				return transform(resultNodesHash);
+			};
+			
+			
+			//------------------определяет parentId нужно для вставки элемента ------------
+			//-----------принимает id нода клика и если это група возвращает его-----------
+			//-------------------если нет возращает ID ближайшей групы---------------------
+			//-------------------------или 0 если корневой элемент ------------------------
+			this.getParenId = function(id) {
+				var node_name = 'NODE.'+ id;
+				var parentId;
 				
-				return $http({method: "Post", url: serverAJAX + 'nodes', data: item}).then(function(res){
-					//alert(JSON.stringify(res.data));
+				if (resultNodesHash[node_name].attrib.type == "GROUP") {
+					alert("----");
+					parentId =  id;
+				} else 
+				if (resultNodesHash[node_name].parentId.length == 0) {
+					alert("0");
+					parentId =  0;
+				} else 
+				if (resultNodesHash[node_name].parentId.length != 0) {
+					var parentu = resultNodesHash[node_name].parentId;
+					var parentId = parentu[par.length - 1]; 
+				}; 
+				
+				return parentId;
+			}
+									
+			//---------отправка сообщения на сервер на добавление (обновление) нода -------
+			//---------------принимает data - объект с описанием параметров нода ----------
+			//---------------ждет статуса выполненной операции, обновление дерева ---------
+			//--------------- произойдет по бродкасту--------------------------------------
+			this.addNodeSend = function(item, parentId) {
+				var node = {};
+				node.item = item; //--- сам нод
+				node.parentId = parentId;
+				return $http({method: "Post", url: serverAJAX + 'nodes', data: node}).then(function(res){
 					//---- обрабатываем пользователские сообщения
 					//----  в случае успешного web но неуспешного по сути
-					if (res.data.status !='ok') {
-						return $q.reject(new Error(res.data.message));
+					if (res.data.type == 'error') {
+						alert(res.data.value);
+						return $q.reject(new Error(res.data.value));
 					} else {
-						
-												
-						//-----------функция для генерации случаного числа из диапазона
-								function getRandomInt(min, max) {
-								  return Math.floor(Math.random() * (max - min + 1)) + min;
-								}
-								var id = getRandomInt(120, 150);
-						
-						//-------   создаем узел --------------------
-						var node = {
-							"attrib":{
-								"type": item.type.zn,
-								"id": id + "", //---------приведение типов в JS это круто 
-								"ip": item.ipaddress,
-								"hostname": item.hostname,
-								"caption": item.caption
-							},
-							"parentId": []
-						};
-						
-						if (item.type.zn == "GROUP") { //---------eсли node Group то добавляем subitem
-							node.subitem = [];
-						}
-						//-------   создаем узел --------------------
-						
-						//------------добавляем объект в Хеш
-						resultNodesHash['Node.'+ id] = node;
-						var subitRef = {
-							attrib: {
-								"name": 'Node.'+ id
-							}
-						};
-											
-						var parentNode;
-						console.log(parentId);
-						if (resultNodesHash['Node.'+ parentId].attrib.type == "GROUP") {
-							parentNode =  resultNodesHash['Node.'+ parentId].subitem;
-						} else if (resultNodesHash['Node.'+ parentId].parentId.length != 0) {
-							var par = resultNodesHash['Node.'+ parentId].parentId;
-							var parId = par[par.length - 1]; 
-							parentNode =  resultNodesHash['Node.' + parId].subitem;
-						} else {
-							console.log("--------------------");
-						};
-						
-						parentNode ? parentNode.unshift(subitRef) : false;
-						
-						
 						return res;
 					}
 				}, function(err){
 					//------вернуть ошибку-----
-						console.log("что то не так с сервером");
-						return $q.reject(new Error("Что-то не так с сервером"));
+					console.log("что то не так с сервером");
+					return $q.reject(new Error("Что-то не так с сервером"));
 				});
 			};
 			
-			this.deleteNodes = function(item){
-				var itId = item.attrib.id;
-				return $http({method: "DELETE", url: serverAJAX + 'nodes/' +itId }).then(function(res){
+			//-------------------отправка сообщения на сервер на удаление нода ------------
+			//------------принимает node-name - объект с описанием параметров нода --------
+			//----------------------ждет статуса выполненной операции----------------------
+			//----------------------обновление произойдет по бродкасту---------------------
+			this.removeNodeSend = function(item){
+				
+				var node_name = 'NODE.' + item.attrib.id;
+				return $http({method: "DELETE", url: serverAJAX + 'nodes/' + node_name })
+				.then(function(res){
 					
-					if(res.data.status !='ok') {
-						$q.reject(new Error(res.data.message));
-					} else {
-							//-----------ДАЛЯМ НОД ИЗ ХЕША ---
-							delete resultNodesHash['Node.'+ itId];
-						
-						return res;
-					}
+					if(res.data.type == 'error') {
+						return $q.reject(new Error(res.data.value));
+					} 
+					console.log(res.data);
+					return res;
 				}, function(err){
-					//------вернуть ошибку-----
-						console.log("что то не так с сервером");
-						return $q.reject(new Error("Что-то не так с сервером при удалении"));
+					//------вернуть ошибку----- и наверное это я отдам в интерсептор запросов
+					console.log("что то не так с сервером");
+					return $q.reject(new Error("Что-то не так с сервером при удалении"));
 				});
 			}
 			
-			//------------полуучение потока eventov с сервера и генерация сообщения об этом
-			this.createConection = function() {
-				var curSocket = new WebSocket(serverWS);
-				//---------------регистрация обработчиков--------
-				//-----------обработчик создания соеденения------
-							
-				curSocket.onopen = function() {
-					console.log("websocet conection start");
-					//curSocket.send(JSON.stringify({'type': 'getfolder', 'path': 'd:/test'}));
-				};
-				
-				//--------обработчик поступления сообщений по сокету--------
-				curSocket.onmessage = function(message) {
-					
-					//----console.log(message.data);
-					var obj = JSON.parse(message.data)
-					
-					if (obj.eventinstance) {
-						console.log("event now");
-						$rootScope.$broadcast('J_eventinstance', obj.eventinstance);
-					} if (obj.node) {
-						console.log("node now");
-						var hashIndex = 'Node.' + obj.node.attrib.id;
-						obj.node.parentId = [];
-						resultNodesHash[hashIndex] = obj.node;
-						$rootScope.$broadcast('J_node', obj.node);
-					}
-					
-				};//---- закрытие обработчика событий сокет
-						
-			
-			}
-		};
+		}	//---- закрытие nodeServ----------------
 		
+		//------ функции формирующие ХЕШ нодов и трансформирующие дерево ----- 
+		// 1. сделать корневой фолдер (должен быть, при добавлениие это важно)
+		// 2. метод добавить удалить узел переместить узел 
 		
-		//------------ функция трансформирующия дерево и строит hesh Nodov
-		// 1.строить хеш без Нодес меньше кода, более читаемо
- 		// 2. сделать корневой фолдер (должен быть, при добавлениие это важно)
-		// 3. метод добавить удалить узел переместить узел 
-		//
-		//
 		function buildHash(rawc){
 			var res = {};
 				var i;
 				//строим хеш наверное делать на єтапе парсинга ][ml н сервере
 				for (i in rawc) {
-					var key = 'Node.'+rawc[i].attrib.id;
+					var key = 'NODE.'+rawc[i].attrib.id;
 					res[key] = rawc[i]; 
 					res[key].parentId = [];
 				}
@@ -175,44 +138,44 @@
 		
 		function transform(res) {
 			
-				var result = {};
-				var i;
-								
-				for (i in res) {
-					
-					if (res[i].attrib.type === 'GROUP') {
-						var k;
-						res[i].nodes = {};
-						var t0 = performance.now();
-						for (k in res[i].subitem) {
-							var key = res[i].subitem[k].attrib.name; //Node.N
+			var result = {};
+			var i;
 							
-							if (res[key]) {
-								var obj = res[key];
-								res[i].nodes[key] = obj;
-									
-								obj.dele = true;
-								obj.parentId.push(res[i].attrib.id);// = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
-							} else {
-								delete res[i].subitem[k];
-								// наверное удалить subitem
-							}
+			for (i in res) {
+				
+				if (res[i].attrib.type === 'GROUP') {
+					var k;
+					res[i].nodes = {};
+					var t0 = performance.now();
+					for (k in res[i].subitem) {
+						var key = res[i].subitem[k].attrib.name; //Node.N
+						
+						if (res[key]) {
+							var obj = res[key];
+							res[i].nodes[key] = obj;
 								
-						  //console.log(key);
+							obj.isSubitem = true;
+							obj.parentId.push(res[i].attrib.id);// = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+						} else {
+							delete res[i].subitem[k];
+							// наверное удалить subitem
 						}
-						var t1 = performance.now();
-						console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:', result);
+							
+					  //console.log(key);
 					}
-					
+					var t1 = performance.now();
+					console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:', result);
 				}
-				for (i in res) {
-					if (!res[i].dele) { // сделать не dele а isSubitem является ли он SubItemom
-						result[i] = res[i];
-					}
-					
+				
+			}
+			for (i in res) {
+				if (!res[i].isSubitem) { 
+					result[i] = res[i];
 				}
-				//console.log(res);
-				return  result;
+				
+			}
+			//console.log(res);
+			return  result;
 				
 		}
 })();

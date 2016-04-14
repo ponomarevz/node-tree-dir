@@ -3,6 +3,8 @@
  	
 const dcp = require('../node_modules/dcpnode/dcpnode.node');
 var parseString = require('xml2js').parseString;
+var xml2js = require('xml2js');
+
 var nodes;
 
 //---------------опции парсера--------------
@@ -47,85 +49,135 @@ var router = express.Router();
 //-------------------ДЛЯ НОДОВ-------------------------
 //-------- настраиваем маршрутизатор сервера--------
 //-------------извлечение всех данных---------------
-nodesget = router.route('/nodes');
-nodesget.get(function(req, resHttp) {
+nodesGet = router.route('/nodes');
+nodesGet.get(function(req, resHttp) {
 	
 	
 	//-------------- запрашиваем список Нодов -------
-dcp.send("C_GetObjectList", "NODE", function(mes){
+	dcp.send("C_GetObjectList", "NODE", 
+	function(mes){
 	console.log("JS SendOk LIST");
 		
-		parseString(mes, pars_opts,
-		function (err, res) {
-			
-			if(err) { //--- ошибка парсинга  ответа DCP
-				return false;
-			};
-			console.log(res);
-			if (res.result.attrib.type != "ok"){ //------ошибка при запросе
-				return false;
-			};
-							
-			parseString(res.result.attrib.value, pars_opts,
+			parseString(mes, pars_opts,
 			function (err, res) {
-				if(err) { //--- ошибка парсинга  ответа DCP result.attrib.value
+				
+				if(err) { //--- ошибка парсинга  ответа DCP
 					return false;
 				};
-				nodes = res.list;
-																		resHttp.json(nodes);
-				console.dir(JSON.stringify(res.list));
-					// отправить клиенту результат 
+				console.log(res);
+				if (res.result.attrib.type != "ok"){ //------ошибка при запросе
+					return false;
+				};
+								
+				parseString(res.result.attrib.value, pars_opts,
+				function (err, res) {
+					if(err) { //--- ошибка парсинга  ответа DCP result.attrib.value
+						return false;
+					};
+					nodes = res.list;
+							resHttp.json(nodes);
+					console.dir(JSON.stringify(res.list));
+						// отправить клиенту результат 
+				});
 			});
-		});
 			
 		}, function(err){
 			console.log("Send Error" + err);
 		});
-		
-	
-	
-	
-	
-	
-	
+
 });
 
-//--------------добавление нода-------------------
-var nodeadd = router.route('/nodes');
-nodeadd.post(function(req, res) {
-		//TODO необходимо сериализировать форму в xml
-		//вызвать метод отправки сообщения ядру
-	console.log(req.body);
-	//---- необходимо подумать над форматом служебных сообщений
-	//"NODE" XML//
+//--------------получаем команду на добавление нода-------------------
+var nodeAddReceive = router.route('/nodes');
+nodeAddReceive.post(function(req, res) {
+	var nodeAttrib = req.body.item;
+	var parentId = req.body.parentId;
+	
+	console.log("parentId====" + parentId);	
+	
 		
-	dcp.send("C_UpdateObject", "NODE", function(mes){
+	var message = { type: 'error',           //---------статус оаерации
+		value: 'DCP Add node work ERROR'  //--------- сообщение по результатам операции
+	};
+	
+	//---------формируем нод---
+		var node = {};
+		node.attrib = nodeAttrib;
+		console.log(node);
+		var builder = new xml2js.Builder({rootName:'node', attrkey: 'attrib', pretty:false, doctype: false}); 
+		var xml = builder.buildObject(node);
 		
+		console.log(xml);
+	//-------------------------
+	
+	dcp.send("C_UpdateObject", xml, function(mes){
+		
+		parseString(mes, pars_opts,
+		function (err, parse_res) {
+			if(err) { //--- ошибка парсинга  ответа DCP
+				return false;
+			};
+			console.log(parse_res);
+			if (parse_res.result.attrib.type == 'error') {
+				message.type = 'error';
+				message.value = parse_res.result.attrib.value;
+			} else 
+			{
+				message.type = 'ok';
+				message.value = parse_res.result.attrib.value;
+			}
+			res.json(message);
+		});
+		
+		
+		if (parentId == 0){
+			//---просто добавляем нод---
+		} else {
+			//---добавляем нод в групу	
+		}
+
 	}, function(err){
-		
+		console.log('DCP Add node work ERROR - ' + err);
 	});
-	
-	var mes = {
-		status: 'ok',             //---------статус оаерации
-		message: 'Узел добавлен'  //--------- сообщение по результатам операции
-	};
-	res.json(mes);
+		
 });
 
 
-//--------------удаление нода-------------------
-var nodedelete = router.route('/nodes/:id');
-nodedelete.delete(function(req, res) {
-	var id = req.params.id
-		//TODO необходимо сериализировать форму в xml
-		//вызвать метод отправки сообщения ядру на удаление нода
-	console.log("Удаляем нод по ID " + id);
-	//---- необходимо подумать над форматом служебных сообщений
-	var mes = {
-		status: 'ok',           //---------статус оаерации
-		message: 'Узел удален'  //--------- сообщение по результатам операции
+//--------------получает команду на удаление нода-----------------
+var nodeRemoveReceive = router.route('/nodes/:node_name');
+nodeRemoveReceive.delete(function(req, res) {
+	var node_name = req.params.node_name;
+	
+	console.log("Удаляем нод по node_name " + node_name);
+	var message = { type: 'error',           //---------статус оаерации
+		value: 'dcp Remove work error'  //--------- сообщение по результатам операции
 	};
-	res.json(mes);
+	
+	dcp.send("C_RemoveObject", node_name, function(mes){
+									
+		parseString(mes, pars_opts,
+		function (err, parse_res) {
+			if(err) { //--- ошибка парсинга  ответа DCP
+				return false;
+			};
+			console.log(parse_res);
+			if (parse_res.result.attrib.type == 'error') {
+				message.type = 'error';
+				message.value = parse_res.result.attrib.value;
+			} else 
+			{
+				message.type = 'ok';
+				message.value = parse_res.result.attrib.value;
+			}
+			res.json(message);
+		});
+	
+	}, function(err){
+		console.log("DCP Remove node work ERROR- " + err);
+		res.json(message);
+	});
+	//---- необходимо подумать над форматом служебных сообщений
+	
 });
 
 //--------------------------------------------------------------
@@ -135,6 +187,7 @@ app.use('/api', router);
 	// Запускаем http сервер
 app.listen(port);
 console.log('server start' + port);
+
 
 var WebSocketServer = new require('ws');
 
@@ -171,40 +224,54 @@ webSocketServer.on('connection', function(ws) {
  
 });
 
-var events;
 
-//-----------функция для генерации случаного числа из диапазона
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+//-----------функция для отправки сообщения всем клиентам------------
+//-------------------message JSON------------------------------------
+function socketSendAll(message) {
+	
+	for (var key in clients) {
+		try {
+			var mes = JSON.stringify(message);
+			clients[key].send(mes);
+		} catch (error) {
+			if (error == "Error: not opened") {
+				delete clients[key];
+			};
+			console.log("---SEND MESSAGE" + error);
+		}
+	}
 }
-
 
 //------------------- вешаю обработчик------------
 dcp.on("data", function(type, mes){
 	console.log("-----------------------------------------------------------------------");
 	console.log("Коллбек onData type=" + type);
 	
-	console.log("~~~~~~~~~~~~~~~~~~~~~~ПАРСИНГА111~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+	console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~ПАРСИНГА111~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+	console.log("Коллбек onData type=" + mes);
 	
-	parseString(mes, pars_opts,
-	function (err, res) {
-		if(err) { //--- ошибка парсинга  ответа DCP
-			return false;
-		};
-		//----------сделать отдельной функцией
-			var message = JSON.stringify(res);
+	//C_ObjectRemoveInfo,    C_ObjectListInfo,           C_OperationResult,      C_RunScanTask,
+	
+	
+	var responce = {}; //responce.typy; responce.message
+	responce.type = type;
+	
+	if(type == "C_ObjectInfo"){
+	
+		parseString(mes, pars_opts,
+		function (err, parse_res) {
+			if(err) { //--- ошибка парсинга  ответа DCP
+				return false;
+			};
+			responce.message = parse_res;
+			socketSendAll(responce);
+		});
 		
-			for (var key in clients) {
-				try {
-					clients[key].send(message);
-				} catch (error) {
-					if (error == "Error: not opened") {
-						delete clients[key];
-					};
-					console.log("---SEND MESSAGE" + error);
-				}
-			}
-		
-	});
+	} else 
+	if (type == "C_ObjectRemoveInfo"){
+		responce.message = mes;
+		socketSendAll(responce);
+	}
+	
 });
 

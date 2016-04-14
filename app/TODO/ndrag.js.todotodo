@@ -49,3 +49,45 @@
 						mouseOn = false;
 				});
 				//-----------конец драг анд дроп------------
+				
+//----------------------------------обновление нодов с эмулятором --------
+//----------------------------------обновление нодов с эмулятором --------
+//----------------------------------обновление нодов с эмулятором --------
+//-------   создаем узел --------------------
+						var node = {
+							"attrib":{
+								"type": item.type.zn,
+								"id": id + "", //---------приведение типов в JS это круто 
+								"ip": item.ipaddress,
+								"hostname": item.hostname,
+								"caption": item.caption
+							},
+							"parentId": []
+						};
+						
+						if (item.type.zn == "GROUP") { //---------eсли node Group то добавляем subitem
+							node.subitem = [];
+						}
+						//-------   создаем узел --------------------
+						
+						//------------добавляем объект в Хеш
+						resultNodesHash['Node.'+ id] = node;
+						var subitRef = {
+							attrib: {
+								"name": 'Node.'+ id
+							}
+						};
+											
+						var parentNode;
+						console.log(parentId);
+						if (resultNodesHash['Node.'+ parentId].attrib.type == "GROUP") {
+							parentNode =  resultNodesHash['Node.'+ parentId].subitem;
+						} else if (resultNodesHash['Node.'+ parentId].parentId.length != 0) {
+							var par = resultNodesHash['Node.'+ parentId].parentId;
+							var parId = par[par.length - 1]; 
+							parentNode =  resultNodesHash['Node.' + parId].subitem;
+						} else {
+							console.log("--------------------");
+						};
+						
+						parentNode ? parentNode.unshift(subitRef) : false;

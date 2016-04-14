@@ -64,22 +64,24 @@ angular
 						controller: ['nodeServ', '$scope', '$state', function(nodeServ, $scope, $state){
 							//-------------- убрать отсюда
 							$scope.itemType = [
-								{title: "Група" , zn: 'GROUP' },
-								{title: "Устройство" , zn: 'DEVICE' }
+								{title: "Група" , type: 'GROUP' },
+								{title: "Устройство" , type: 'DEVICE' }
 							];
 							
 							$scope.addItem = function(itemform, item){
 								//$scope.curentId Будет парентом нужно если не если Група то ок добавляем сюда если не група то тоже ок смотрим кто у него парент и вставляем туда
 								if(itemform.$valid) {
+									//-------- проверить на парент ID --------
+									var parentId = nodeServ.getParenId($scope.curentId);
+									
 									//----- посылаем запрос на сервер для добавления элемента
-									nodeServ.addNodes(item, $scope.curentId).then(function(data){
+									nodeServ.addNodeSend(item, parentId ).then(function(data){
 										//----- в случае успеха делаем переход на состояние
 										//----- эммитируем событие на верх скопа, для того что бы обновить модель
-											$scope.returnState(); //----------- переходим в исходное состояние
-										$scope.$emit('updatenodes'); //--------данный метод нужен для отправки события на верхний скоп для того чтобы там сгенерировать обработчик обновления модели
+										$scope.returnState(); //----------- переходим в исходное состояние
 									}, function(err){
 										//-----в случае неудачи говорим что не так
-										alert(err);
+										alert(JSON.stringify(err));
 									});
 
 								}

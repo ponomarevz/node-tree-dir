@@ -2,8 +2,8 @@
 //------------используется нотация минимизации, порядок внедренных 
 //зависимостей должен совподать с тем что перечисленно в аргументах функции
 angular.module('netmonApp')
-  .controller('dashboardCtrl', ['nodeServ', 'dashServ', '$scope', '$state',  '$localStorage', 
-	function (nodeServ, dashServ, $scope, $state,  $localStorage) {
+  .controller('dashboardCtrl', ['nodeServ', 'socketServ', 'dashServ', '$scope', '$state',  '$localStorage', 
+	function (nodeServ, socketServ, dashServ, $scope, $state,  $localStorage) {
 		var steck_length = 31; //----------- переменная для инициализации длины списка подсвеченных эллементов
 		
 		$scope.dash = dashServ.initDash();
@@ -34,15 +34,15 @@ angular.module('netmonApp')
 		//----------- слушает событие deletenode и обновляет модель
 		//----------- может назвать не делете а гзвфеу
 		$scope.$on('updatenodes', function(){
-			$scope.nodes = nodeServ.updateNodes();
+			$scope.nodes = nodeServ.updateNode();
 		});
 		
 		
 		
 				
-		nodeServ.createConection();
+		socketServ.createConection();
 		//-------------------обработчик для входящих событий eventinstance
-		$scope.$on('J_eventinstance', function(event, res) {
+		$scope.$on('C_ObjectInfo_Eventinstance', function(event, res) {
 			//					console.log("--------------------")
 			//---------- этот обработчик по сути включает режим монииторинга входящих событий
 			//1. так как событий может быть много необходимо подумать о стеке и его реализации
@@ -71,15 +71,22 @@ angular.module('netmonApp')
 		});
 		
 		//-------------------обработчик для входящих событий node
-		$scope.$on('J_node', function(event, res) {
+		$scope.$on('C_ObjectInfo_Node', function(event, node) {
+			//-------------------------обновление нода------------------------------------
 			//---------почему так нужно делать пока незнаю но обновление объекта
 			//---------добавление и удаление происходит нормально, а вот обновление падает
 			//-------- сделал такой хак
 				delete $scope.nodes;
 				$scope.$apply();
-				$scope.nodes = nodeServ.updateNodes(); //---- перестраивает дерево по хешу и обновляем модель
+				$scope.nodes = nodeServ.updateNode(node); //---- перестраивает дерево по хешу и обновляем модель
 				$scope.$apply();
 				console.log($scope.nodes);
+		});
+		
+		$scope.$on('C_ObjectRemoveInfo_Node', function(event, node_name) {
+			//---------удаление нода из модели и обновление дерева
+			$scope.nodes = nodeServ.removeNode(node_name);
+			$scope.$apply();
 		});
 		
 		
