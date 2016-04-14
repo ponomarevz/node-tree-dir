@@ -1,5 +1,8 @@
 'use strict';
-(function(){
+(function(isAngular){
+	if (isAngular) { 
+		alert("angular");
+	}
 	var serverAJAX = "http://localhost:3000/api/";
 	var serverWS = "ws://localhost:8081";
 
@@ -154,7 +157,7 @@
 				for (i in rawc) {
 					var key = 'Node.'+rawc[i].attrib.id;
 					res[key] = rawc[i]; 
-					res[key].parentId = [];
+					res[key].parentId = 0;
 				}
 				return res;
 		};
@@ -178,7 +181,7 @@
 								res[i].nodes[key] = obj;
 									
 								obj.dele = true;
-								obj.parentId.push(res[i].attrib.id);// = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
+								obj.parentId = res[i].attrib.id; // IDO = res[i].parentId.concat(res[i].attrib.id); //------------деллаем ссылку на родительский эллемент
 							} else {
 								delete res[i].subitem[k];
 								// наверное удалить subitem
@@ -201,6 +204,6 @@
 				return  result;
 				
 		}
-})();
+})(typeof angular !== 'undefined');
 
 
