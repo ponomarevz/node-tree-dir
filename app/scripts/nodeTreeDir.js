@@ -143,38 +143,24 @@
 				
 				//------------------------------функция построения состояния по текущему ITEM 
 				var getState = function(item) {
-					var curState = item.parentId;
+					
 					var curId = item.attrib.id;
-					
-					var fullState;
-					
+					//---IDO	
 					if (item.attrib.type == 'GROUP') {
 						console.log(curId);
 						console.log($scope.$root.fullState);
 						var index = $scope.$root.fullState.indexOf(curId);
 						console.log(index);
 						if (index <= -1) {
-							curState = curState.concat(item.attrib.id);
+							$scope.$root.fullState.push(item.attrib.id);
 						} else {
-							//---
 							$scope.$root.fullState.splice(index, 1);
 						}
 					}
-					
-					
-					//-------- curState содержит id всех перентов выделенного итема
-					//--------curStateFilter содержит id всех перентов которых нет в $scope.$root.fullState
-					//---------$scope.$root.fullState содержит id всех открытых вложеных груп нодов
-					//----------fullState содержит строку которая будет хаписана в хистори адресною строку браузера
-					var curStateFilter = curState.filter(function(state){
-						return $scope.$root.fullState.indexOf(state) <= -1;
-					})
-					
-					
-					$scope.$root.fullState = $scope.$root.fullState.concat(curStateFilter);
-				
-					fullState =  $scope.$root.fullState.join('.');
+										
+					var fullState =  $scope.$root.fullState.join('.');
 					return {'rout': fullState, 'id': item.attrib.id};
+					//--IDO	
 				}
 				
 				$scope.toState = function(item) {
