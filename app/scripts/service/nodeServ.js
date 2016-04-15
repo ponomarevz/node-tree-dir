@@ -16,8 +16,7 @@
 				return $http.get(serverAJAX + 'nodes')
 					.then(function (res) {
 						console.log(res.data);
-						nodesList.initNodesHashByHash(res.data);
-						return  nodesList.getNodesTree();
+						return  nodesList.initNodesHashByHash(res.data).getNodesTree();
 					}, function(err) {
 						//------вернуть ошибку-----
 						console.log("что то не так");
@@ -28,16 +27,14 @@
 			//--------------- сначала обновляет хеш, потом по обновленному хешу перестраивает дерево ----------
 			//--------------- возвращает результирующие дерево, для формирование модели------------------------
 			this.updateNode = function(node) {
-				nodesList.updateNode(node);
-				return nodesList.getNodesTree();
+				return nodesList.updateNode(node).getNodesTree();
 			};
 			//--------------- метод принимает иимя нода и удаляет его из хеша---------- -----------------------
 			//--------------- сначала обновляет хеш, потом по обновленному хешу перестраивает дерево ----------
 			//--------------- возвращает результирующие дерево, для формирование модели------------------------
 			this.removeNode = function(node_name) {
 				//	console.log(JSON.stringify(resultNodesHash));
-				nodesList.removeNode(node_name);
-				return  nodesList.getNodesTree();
+				return  nodesList.removeNode(node_name).getNodesTree();
 			};
 						
 			//------------------определяет parentId нужно для вставки элемента ------------
