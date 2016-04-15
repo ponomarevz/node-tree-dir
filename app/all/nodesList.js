@@ -19,7 +19,7 @@
 		//-------------может использоваться как на сервере так и на ядре------------------
 		this.initNodesHashByRd = function(rawd) {
 			resultNodesHash = buildHash(rawd);     //------формируем хеш по сырым данным--
-			return resultNodesTree;
+			return this;
 		};
 		
 		//-----------------инициализирует хеш нодов из другого хеша ----------------------
@@ -28,6 +28,7 @@
 		this.initNodesHashByHash = function(hash) {
 			resultNodesHash = null;
 			resultNodesHash = hash;
+			return this;
 		}
 		//---------отдает хеш для обновление модели---------------------------------------
 		this.getNodesHash = function() {
@@ -82,12 +83,14 @@
 			var node_name = 'NODE.' + node.attrib.id;
 			node.parentId = 0; //---------- парент ID пока так
 			resultNodesHash[node_name] = node;
+			return this;
 		};
 		//--------------- метод принимает иимя нода и удаляет его из хеша-----------------------------------
 		//------------------------------ обновляет хеш нодов -----------------------------------------------
 		this.removeNode = function(node_name) {
 			//	console.log(JSON.stringify(resultNodesHash));
 			delete resultNodesHash[node_name];
+			return this;
 		};
 	
 		//------ функции формирующие ХЕШ нодов и трансформирующие дерево ----- 
